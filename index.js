@@ -7,13 +7,17 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const Movie = require('./models/movie.model');
-console.log("Movie:", Movie);
-console.log("Type of Movie:", typeof Movie);
+const MovieRoutes = require('./routes/movie.routes');
+//console.log("Movie:", Movie);
+//console.log("Type of Movie:", typeof Movie);
 const app = express();//express app object
 
 //configure body parser
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
+console.log("DEBUG - What is MovieRoutes?:", MovieRoutes);
+console.log("DEBUG - Type:", typeof MovieRoutes);
+MovieRoutes(app); // involking movie routes 
 
 app.get("/home", (req, res)=>{
     return res.json({
@@ -30,17 +34,6 @@ try {
         // ENSURE YOUR .ENV FILE USES THE NAME "DB_URL"
         await mongoose.connect(process.env.DB_URL);
         console.log("Successfully connected to mongo");
-         const testMovie = await Movie.create({
-            name:"Bachan Pandey",
-            description: "Comedy movie",
-            casts:["akshay","kriti sanon","jacqueline fernandiz"],
-            trailerUrl:"http://bachhanpandey/trailers/1",
-            language: "hindi",
-            releaseDate:"12-01-26",
-            director:"farhad samji",
-            releaseStatus:"Released",
-        });
-        console.log("Movie created successfully:",testMovie.name);
     } catch (error) {
         console.error("Mongoose connection error:", error.message);
     }
