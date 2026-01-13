@@ -1,6 +1,9 @@
 const Movie = require('../models/movie.model');
 const movieService = require('../services/movie.service'); 
+const {errorResponseBody,successResponseBody } = require('../utils/responseBody');
 
+
+/*** 
 const errorResponseBody = {
     err: {},
     data: {},
@@ -13,7 +16,7 @@ const successResponseBody = {
     data: {},
     message: "Successfully processed the request",
     success: true
-};
+};*/
 
 const createMovie = async (req, res) => {
     try {
