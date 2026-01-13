@@ -1,7 +1,25 @@
-const MovieController = require('../controllers/movie.controller'); 
+const movieController = require('../controllers/movie.controller');
+const movieMiddlewares = require('../middlewares/movie.middleware');
 
-// Direct export of the function
 module.exports = (app) => {
-    console.log("✅ Routes are being registered...");
-    app.post('/mba/api/v1/movies', MovieController.createMovie);
+    console.log('✅ Movie routes registered');
+
+    // Create Movie
+    app.post(
+        '/mba/api/v1/movies',
+        movieMiddlewares.validateMovieCreateRequest,
+        movieController.createMovie
+    );
+
+    // Get Movie by ID
+    app.get(
+        '/mba/api/v1/movies/:id',
+        movieController.getMovie
+    );
+
+    // Delete Movie
+    app.delete(
+        '/mba/api/v1/movies/:id',
+        movieController.deleteMovie
+    );
 };
