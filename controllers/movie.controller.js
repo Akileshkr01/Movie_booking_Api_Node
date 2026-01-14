@@ -1,29 +1,22 @@
-const Movie = require('../models/movie.model');
 const movieService = require('../services/movie.service'); 
-const {errorResponseBody,successResponseBody } = require('../utils/responseBody');
-
-
-/*** 
-const errorResponseBody = {
-    err: {},
-    data: {},
-    message: "Something went wrong",
-    success: false
-};
-
-const successResponseBody = {
-    err: {},
-    data: {},
-    message: "Successfully processed the request",
-    success: true
-};*/
+const { errorResponseBody, successResponseBody } = require('../utils/responseBody');
 
 const createMovie = async (req, res) => {
     try {
-        const movie = await Movie.create(req.body);
+        const response = await movieService.createMovie(req.body);
+        
+        // Check if service returned a validation error object
+        if (response.err) {
+            return res.status(response.code).json({
+                ...errorResponseBody,
+                err: response.err,
+                message: "Validation failed on a few parameters of the request body"
+            });
+        } 
+
         return res.status(201).json({
             ...successResponseBody,
-            data: movie,
+            data: response,
             message: 'Successfully created a new movie'
         });
     } catch (err) {
@@ -50,13 +43,25 @@ const getMovie = async (req, res) => {
             data: response
         });
     } catch (err) {
-        return res.status(500).json(errorResponseBody);
+        return res.status(500).json({
+            ...errorResponseBody,
+            err: err.message
+        });
     }
 };
 
 const deleteMovie = async (req, res) => {
     try {
-        const response = await Movie.deleteOne({ _id: req.params.id });
+        // Pass only the ID string as expected by your service
+        const response = await movieService.deleteMovie(req.params.id);
+        
+        if (!response) {
+            return res.status(404).json({
+                ...errorResponseBody,
+                message: "Movie not found to delete"
+            });
+        }
+
         return res.status(200).json({
             ...successResponseBody,
             data: response,
@@ -70,8 +75,33 @@ const deleteMovie = async (req, res) => {
     }
 };
 
+const updateMovie = async (req, res) => {
+    try {
+        const response = await movieService.updateMovie(req.params.id, req.body);
+        
+        if (response.err) {
+            return res.status(response.code || 400).json({
+                ...errorResponseBody,
+                err: response.err
+            });
+        }
+
+        return res.status(200).json({
+            ...successResponseBody,
+            data: response,
+            message: "Successfully updated the movie"
+        });
+    } catch (err) {
+        return res.status(500).json({
+            ...errorResponseBody,
+            err: err.message
+        });
+    }
+}
+
 module.exports = {
     createMovie,
     getMovie,
-    deleteMovie
+    deleteMovie,
+    updateMovie
 };
