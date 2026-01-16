@@ -5,7 +5,6 @@ const createMovie = async (req, res) => {
     try {
         const response = await movieService.createMovie(req.body);
         
-        // Check if service returned a validation error object
         if (response.err) {
             return res.status(response.code).json({
                 ...errorResponseBody,
@@ -52,7 +51,6 @@ const getMovie = async (req, res) => {
 
 const deleteMovie = async (req, res) => {
     try {
-        // Pass only the ID string as expected by your service
         const response = await movieService.deleteMovie(req.params.id);
         
         if (!response) {
@@ -99,9 +97,36 @@ const updateMovie = async (req, res) => {
     }
 }
 
+const getMovies = async (req, res) => {
+    try {
+        // FIXED: Corrected the service call path
+        const response = await movieService.fetchMovies(req.query);
+        
+        if (response.err) {
+            return res.status(response.code || 500).json({
+                ...errorResponseBody,
+                err: response.err
+            });
+        }
+
+        // FIXED: Used spread operator to avoid global object mutation
+        return res.status(200).json({
+            ...successResponseBody,
+            data: response
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ...errorResponseBody,
+            err: error.message
+        });
+    }
+}
+
 module.exports = {
     createMovie,
     getMovie,
     deleteMovie,
-    updateMovie
+    updateMovie,
+    getMovies 
 };
