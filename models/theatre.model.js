@@ -6,7 +6,8 @@ const mongoose = require('mongoose');
 const theatreSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        minlength:5
     },
     description: {
         type: String
@@ -28,4 +29,4 @@ const theatreSchema = new mongoose.Schema({
 const Theatre = mongoose.model('Theatre', theatreSchema);
 
 
-module.exports = Theatre;
+module.exports = Theatre; 
