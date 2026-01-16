@@ -4,33 +4,59 @@ const { successResponseBody, errorResponseBody } = require('../utils/responseBod
 const create = async (req, res) => {
     try {
         const response = await theatreService.createTheatre(req.body);
-        
-        // Handle Validation Errors (422) returned from Service
         if (response && response.err) {
-            return res.status(response.code || 422).json({
+            return res.status(response.code).json({
                 ...errorResponseBody,
-                err: response.err,
-                message: "Validation failed on few parameters of the request body"
+                err: response.err
             });
         }
-        
-        // Handle Success
         return res.status(201).json({
             ...successResponseBody,
             data: response,
             message: "Successfully created the theatre"
         });
-
     } catch (error) {
-        // Handle Server Crashes (500)
-        return res.status(500).json({
-            ...errorResponseBody,
-            err: error.message
-        });
+        return res.status(500).json({ ...errorResponseBody, err: error.message });
     }
-}
-
-// CRITICAL: This must match what is called in theatre.routes.js
-module.exports = {
-    create
 };
+
+const destroy = async (req, res) => {
+    try {
+        const response = await theatreService.deleteTheatre(req.params.id);
+        if (response && response.err) {
+            return res.status(response.code).json({
+                ...errorResponseBody,
+                err: response.err
+            });
+        }
+        return res.status(200).json({
+            ...successResponseBody,
+            data: response,
+            message: "Successfully deleted the given theatre"
+        });
+    } catch (error) {
+        return res.status(500).json({ ...errorResponseBody, err: error.message });
+    }
+};
+
+const getTheatre = async (req, res) => {
+    try {
+        const response = await theatreService.getTheatre(req.params.id);
+        if (response && response.err) {
+            return res.status(response.code).json({
+                ...errorResponseBody,
+                err: response.err
+            });
+        }
+        // FIXED: Added return res.status().json() and used spread operator
+        return res.status(200).json({
+            ...successResponseBody,
+            data: response,
+            message: "Successfully fetched the data of the theatre"
+        });
+    } catch (error) {
+        return res.status(500).json({ ...errorResponseBody, err: error.message });
+    }
+};
+
+module.exports = { create, destroy, getTheatre };
