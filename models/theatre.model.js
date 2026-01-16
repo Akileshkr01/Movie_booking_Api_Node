@@ -1,25 +1,31 @@
- const mongoose = equire('mongoose');
- /***
-  * Defines the schema of theatre resource to be stored in the db
-  */
+const mongoose = require('mongoose');
 
- const theatreSchema = new mongoose.Schema({
-    name:{
+/**
+ * Defines the schema of theatre resource to be stored in the db
+ */
+const theatreSchema = new mongoose.Schema({
+    name: {
         type: String,
         required: true
-
     },
-    description: String,
+    description: {
+        type: String
+    },
     city: {
         type: String,
         required: true
     },
     pincode: {
-        type :Number,
+        type: Number,
         required: true
     },
-    address: String
- },{timestamps: true});
- const theatre = mongoose.model('Theatre',theatreSchema);
+    address: {
+        type: String
+    }
+}, { timestamps: true });
 
- module.exports = Theatre;
+
+const Theatre = mongoose.model('Theatre', theatreSchema);
+
+
+module.exports = Theatre;
