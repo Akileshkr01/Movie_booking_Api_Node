@@ -37,5 +37,11 @@ module.exports = (app) => {
     app.patch(
         '/mba/api/v1/movies/:id', 
         movieController.updateMovie
+    );
+    //Fetch the movies 
+    //Method:GET 
+    app.get(
+        '/mba/api/v1/movies',
+        movieController.getMovies
     )
 };

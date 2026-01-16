@@ -24,7 +24,6 @@ const createMovie = async (data) => {
  * Service to delete a movie by ID
  */
 const deleteMovie = async (id) => {
-    // findByIdAndDelete is more reliable for direct ID deletion
     const response = await Movie.findByIdAndDelete(id);
     return response;
 }
@@ -36,7 +35,6 @@ const getMovieById = async (id) => {
     try {
         const movie = await Movie.findById(id);
         
-        // Safety check: Check if movie exists BEFORE accessing its properties
         if (!movie) {
             return {
                 err: "No movie found for the corresponding id provided",
@@ -44,7 +42,6 @@ const getMovieById = async (id) => {
             };
         }
         
-        console.log("Movie found successfully:", movie._id);
         return movie;
     } catch (err) {
         return {
@@ -59,8 +56,6 @@ const getMovieById = async (id) => {
  */
 const updateMovie = async (id, data) => {
     try {
-        // { new: true } returns the updated document instead of the old one
-        // { runValidators: true } ensures the update follows the Schema rules
         const movie = await Movie.findByIdAndUpdate(id, data, { new: true, runValidators: true });
         return movie;
     } catch (error) {
@@ -69,11 +64,41 @@ const updateMovie = async (id, data) => {
             code: 400
         };
     }
+} 
+
+/**
+ * Service to fetch movies based on filters
+ */
+const fetchMovies = async (filter) => {
+    try {
+        let query = {};
+        if (filter.name) {
+            // Using regex makes searching more user-friendly (case-insensitive)
+            query.name = { $regex: filter.name, $options: 'i' };
+        }
+        
+        const movies = await Movie.find(query);
+
+        // Check for empty array
+        if (!movies || movies.length === 0) {
+            return {
+                err: 'Not able to find the queried movies',
+                code: 404 // FIXED: Added comma above this line
+            };
+        }
+        return movies; 
+    } catch (error) {
+        return {
+            err: error.message,
+            code: 500
+        };
+    }
 }
 
 module.exports = {
     createMovie,
     deleteMovie,
     getMovieById,
-    updateMovie
+    updateMovie,
+    fetchMovies
 };
