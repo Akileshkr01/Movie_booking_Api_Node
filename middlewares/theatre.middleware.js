@@ -12,7 +12,7 @@ const validateTheatreCreateRequest = async(req,res,next) => {
     }
     //validation for the presence of city
     if(!req.body.city){
-        errorResponseBody.message = "the city of the tehatre is not present in  the request";
+        errorResponseBody.message = "the city of the theatre is not present in  the request";
         return res.status(400).json(errorResponseBody);
     }
     next(); // everything is fine move to the next middleware

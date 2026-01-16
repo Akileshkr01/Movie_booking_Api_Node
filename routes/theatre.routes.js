@@ -2,12 +2,22 @@ const theatreController = require('../controllers/theatre.controller');
 const theatreMiddleware = require('../middlewares/theatre.middleware');
 
 const routes = (app) => {
-    console.log('Theatre routes registered');
+    console.log('✅ Theatre routes registered');
     
     app.post(
         '/mba/api/v1/theatres', 
         theatreMiddleware.validateTheatreCreateRequest,
         theatreController.create
+    );
+
+    app.delete(
+        '/mba/api/v1/theatres/:id',
+        theatreController.destroy
+    );
+
+    app.get(
+        '/mba/api/v1/theatres/:id',
+        theatreController.getTheatre
     );
 };
 
