@@ -62,8 +62,23 @@ const getTheatre = async (id) => {
     }
 };
 
+const getAllTheatres = async () => {
+    try {
+        // find({}) fetches every single document in the collection
+        const response = await Theatre.find({});
+        return response;
+    } catch (error) {
+        // Logging the error is good for debugging on the server
+        console.error("Error in getAllTheatres Service:", error);
+        
+        // We throw the error so the Controller's catch block can handle the 500 response
+        throw error;
+    }
+};
+
 module.exports = {
     createTheatre,
     deleteTheatre,
-    getTheatre
+    getTheatre,
+    getAllTheatres
 };
