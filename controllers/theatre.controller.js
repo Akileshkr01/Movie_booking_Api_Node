@@ -41,14 +41,15 @@ const destroy = async (req, res) => {
 
 const getTheatre = async (req, res) => {
     try {
+        // This line will now work because getTheatre is exported from the service
         const response = await theatreService.getTheatre(req.params.id);
+        
         if (response && response.err) {
             return res.status(response.code).json({
                 ...errorResponseBody,
                 err: response.err
             });
         }
-        // FIXED: Added return res.status().json() and used spread operator
         return res.status(200).json({
             ...successResponseBody,
             data: response,
@@ -59,4 +60,28 @@ const getTheatre = async (req, res) => {
     }
 };
 
-module.exports = { create, destroy, getTheatre };
+const getTheatres = async (req, res) => {
+    try {
+        const response = await theatreService.getAllTheatres();
+
+        return res.status(200).json({
+            ...successResponseBody,
+            data: response,
+            message: "Successfully fetched all the theatres"
+        });
+
+    } catch (error) {
+        console.error("Error in getTheatres Controller:", error);
+        
+        return res.status(500).json({
+            ...errorResponseBody,
+            err: error.message
+        });
+    }
+};
+
+module.exports = { create,
+     destroy,
+      getTheatre,
+    getTheatres
+ };
