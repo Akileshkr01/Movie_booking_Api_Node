@@ -4,6 +4,15 @@ const badRequestResponse = {
     data:{},
     message:"Malformed Request | Bad Request"
 }
+console.log('Loaded theatre.middleware.js from:', __filename);
+
+/**
+ * 
+ * @param  req -> HTTP request object
+ * @param  res  ->HTTP response object
+ * @param  next  -> next middleware function
+ * @returns -> whether the request is valid or not 
+ */
 const validateMovieCreateRequest = (req, res, next) => {
     //validate the movie name
     if (!req.body.name) {
