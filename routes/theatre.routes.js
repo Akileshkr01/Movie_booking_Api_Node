@@ -1,11 +1,11 @@
 const theatreController = require('../controllers/theatre.controller');
 const theatreMiddleware = require('../middlewares/theatre.middleware');
 
-const routes = (app) => {
-    console.log('Theatre routes registered');
-    
+module.exports = (app) => {
+    console.log('✅ Theatre routes registered');
+
     app.post(
-        '/mba/api/v1/theatres', 
+        '/mba/api/v1/theatres',
         theatreMiddleware.validateTheatreCreateRequest,
         theatreController.create
     );
@@ -23,7 +23,16 @@ const routes = (app) => {
     app.get(
         '/mba/api/v1/theatres',
         theatreController.getTheatres
-    )
-};
+    );
 
-module.exports = routes;
+    app.patch(
+        '/mba/api/v1/theatres/:id',
+        theatreController.update
+    );
+
+    app.patch(
+        '/mba/api/v1/theatres/:id/movies',
+        theatreMiddleware.validateUpdateMoviesRequest,
+        theatreController.updateMovies
+    );
+};
