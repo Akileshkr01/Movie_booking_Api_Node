@@ -55,15 +55,29 @@ const getAllTheatres = async (queryParams) => {
     const query = {};
     const options = {};
 
+    // Filters
     if (queryParams.city) query.city = queryParams.city;
     if (queryParams.pincode) query.pincode = queryParams.pincode;
     if (queryParams.name) query.name = queryParams.name;
 
-    if (queryParams.limit) options.limit = parseInt(queryParams.limit);
-    if (queryParams.skip) options.skip = parseInt(queryParams.skip);
+    // Limit 
+    if (queryParams.limit) {
+        options.limit = parseInt(queryParams.limit);
+    }
+
+    // Pagination only when skip exists and for first page skip value is 0
+    if (queryParams.skip !== undefined) {
+        const perPage = queryParams.limit
+            ? parseInt(queryParams.limit)
+            : 5;
+
+        // skip is page number
+        options.skip = parseInt(queryParams.skip) * perPage;
+    }
 
     return Theatre.find(query, null, options);
 };
+
 
 /**
  * UPDATE THEATRE
@@ -102,7 +116,7 @@ const updateMoviesInTheatres = async (theatreId, movieIds, insert) => {
     }
 
     await theatre.save();
-    return theatre.populate('movies');
+    return theatre.populate('movies'  );
 };
 
 module.exports = {
@@ -113,3 +127,4 @@ module.exports = {
     updateTheatre,
     updateMoviesInTheatres
 };
+
