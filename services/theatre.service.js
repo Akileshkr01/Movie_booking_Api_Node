@@ -92,11 +92,24 @@ const updateTheatre = async (id, data) => {
         if (!response) {
             return { err: "No theatre found", code: 404 };
         }
+
         return response;
-    } catch {
+
+    } catch (error) {
+        // Mongoose validation error
+        if (error.name === 'ValidationError') {
+            const err = {};
+            Object.keys(error.errors).forEach(key => {
+                err[key] = error.errors[key].message;
+            });
+            return { err, code: 422 };
+        }
+
+        // Invalid ObjectId or other errors
         return { err: "Invalid theatre ID", code: 400 };
     }
 };
+
 
 /**
  * UPDATE MOVIES IN THEATRE
