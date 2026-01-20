@@ -184,38 +184,15 @@ const getMoviesInAtheatre = async (id) => {
     }
 };
 
-const checkMovieInATheatre = async (theatreId, movieId) => {
+const checkMovieInATheatre = async (theatreId,movieId) => {
     try {
-        // Validate ObjectIds
-        if (!mongoose.Types.ObjectId.isValid(theatreId) ||
-            !mongoose.Types.ObjectId.isValid(movieId)) {
-            return {
-                err: "Invalid theatreId or movieId",
-                status: 400
-            };
-        }
-
-        const theatre = await Theatre.findById(theatreId);
-
-        if (!theatre) {
-            return {
-                err: "No such theatre found for the given id",
-                status: 404
-            };
-        }
-
-        const isMoviePresent = theatre.movies.includes(movieId);
-
-        return {
-            isMoviePresent
-        };
-
+        let response = await Theatre.findById(theatreId);
+        return response.movies.indexOf(movieId) != -1;
     } catch (error) {
-        console.error(error);
-        throw error;
+        console.log(error);
+        
     }
-};
-
+}
 
 module.exports = {
     createTheatre,
@@ -224,7 +201,6 @@ module.exports = {
     getAllTheatres,
     updateTheatre,
     updateMoviesInTheatres,
-    getMoviesInAtheatre,
-    checkMovieInATheatre
+    getMoviesInAtheatre
 };
 
