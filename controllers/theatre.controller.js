@@ -41,9 +41,7 @@ const destroy = async (req, res) => {
 
 const getTheatre = async (req, res) => {
     try {
-        // This line will now work because getTheatre is exported from the service
         const response = await theatreService.getTheatre(req.params.id);
-        
         if (response && response.err) {
             return res.status(response.code).json({
                 ...errorResponseBody,
@@ -62,17 +60,14 @@ const getTheatre = async (req, res) => {
 
 const getTheatres = async (req, res) => {
     try {
-        const response = await theatreService.getAllTheatres();
-
+        const response = await theatreService.getAllTheatres(req.query);
         return res.status(200).json({
             ...successResponseBody,
             data: response,
             message: "Successfully fetched all the theatres"
         });
-
     } catch (error) {
         console.error("Error in getTheatres Controller:", error);
-        
         return res.status(500).json({
             ...errorResponseBody,
             err: error.message
@@ -80,8 +75,59 @@ const getTheatres = async (req, res) => {
     }
 };
 
-module.exports = { create,
-     destroy,
-      getTheatre,
-    getTheatres
- };
+const update = async (req, res) => {
+    try {
+        const response = await theatreService.updateTheatre(req.params.id, req.body);
+        if (response && response.err) {
+            return res.status(response.code).json({
+                ...errorResponseBody,
+                err: response.err
+            });
+        }
+        return res.status(200).json({
+            ...successResponseBody,
+            data: response,
+            message: "Successfully updated the theatre"
+        });
+    } catch (error) {
+        return res.status(500).json({
+            ...errorResponseBody,
+            err: error.message
+        });
+    }
+};
+
+const updateMovies = async (req, res) => {
+    try {
+        const response = await theatreService.updateMoviesInTheatre(
+            req.params.id,
+            req.body.movieIds,
+            req.body.insert
+        );
+        if (response && response.err) {
+            return res.status(response.code).json({
+                ...errorResponseBody,
+                err: response.err
+            });
+        }
+        return res.status(200).json({
+            ...successResponseBody,
+            data: response,
+            message: "Successfully updated movies in the theatre"
+        });
+    } catch (error) {
+        return res.status(500).json({
+            ...errorResponseBody,
+            err: error.message
+        });
+    }
+};
+
+module.exports = {
+    create,
+    destroy,
+    getTheatre,
+    getTheatres,
+    update,
+    updateMovies
+};
