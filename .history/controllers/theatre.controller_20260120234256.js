@@ -168,38 +168,21 @@ const getMovies = async (req, res) => {
     }
 };
 
-const checkMovie = async (req, res) => {
+const checkMovie = async (req,res) => {
     try {
-        const { theatreId, movieId } = req.params;
-
-        const response = await theatreService.checkMovieInATheatre(
-            theatreId,
-            movieId
-        );
-
-        if (response.err) {
-            return res.status(response.status).json({
-                success: false,
-                err: response.err
-            });
+        const response = await theatreService.checkMovieInATheatre(theatreId,movieId);
+        if(response.err){
+            errorResponseBody.err = response.err;
+            return res.status(response.status)
         }
 
-        return res.status(200).json({
-            success: true,
-            message: "Successfully checked if movie is present in the theatre",
-            data: {
-                isMoviePresent: response.isMoviePresent
-            }
-        });
-
+        successResponseBody.data = response;
+        successResponseBody.message =" Successfully checked if movie is present in the theatre";
     } catch (error) {
-        return res.status(500).json({
-            success: false,
-            err: error.message || "Internal Server Error"
-        });
+        errorResponseBody.err = error;
+        return res.status(500).json(errorResponseBody);
     }
 };
-
 
 module.exports = {
     create,
