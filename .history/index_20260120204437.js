@@ -23,7 +23,6 @@ app.use((req, res, next) => {
 // For URL-encoded data
 app.use(express.urlencoded({ extended: true }));
 
-mongoose.set('debug',true);
 // ---------------------------
 // Routes
 // ---------------------------
@@ -68,15 +67,15 @@ const startServer = async () => {
 
     // Connect to MongoDB (Mongoose 7+)
     await mongoose.connect(dbUrl); // No deprecated options needed
-    console.log(' Connected to MongoDB:', mongoose.connection.name);
+    console.log('✅ Connected to MongoDB:', mongoose.connection.name);
 
     // Start Express server
     app.listen(PORT, () => {
-      console.log(` Server started on port ${PORT}`);
+      console.log(`🚀 Server started on port ${PORT}`);
     });
 
   } catch (err) {
-    console.error(' MongoDB connection failed:', err.message);
+    console.error('❌ MongoDB connection failed:', err.message);
     process.exit(1); // Exit if DB connection fails
   }
 };
