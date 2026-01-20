@@ -12,7 +12,7 @@ module.exports = (app) => {
         movieController.createMovie
     );
 
-    // Get Movie by ID
+    // Get Movie by ID(READ)
     // Method: GET | URL: http://localhost:3000/mba/api/v1/movies/:id
     app.get(
         '/mba/api/v1/movies/:id',

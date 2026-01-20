@@ -1,3 +1,4 @@
+// import libararies
 const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config();
@@ -21,13 +22,6 @@ app.use(express.urlencoded({ extended: true }));
 movieRoutes(app);
 theatreRoutes(app); 
 
-// Basic Test Route
-app.get('/home', (req, res) => {
-    res.json({ 
-        success: true, 
-        message: 'API is running and Movie/Theatre routes are registered' 
-    });
-});
 
 /**
  * Server and Database Connection
@@ -47,3 +41,4 @@ app.listen(PORT, async () => {
         process.exit(1); 
     }
 });
+//cd /d "D:\web mini projects\movie booking app\project movie booking backend app"

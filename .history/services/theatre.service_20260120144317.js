@@ -126,7 +126,6 @@ const updateTheatre = async (id, data) => {
     }
 };
 
-
 /**
  * Updates movies in a theatre's movies list.
  * Can either add or remove movies based on the `insert` flag.
@@ -138,7 +137,6 @@ const updateTheatre = async (id, data) => {
  */
 const updateMoviesInTheatre = async (theatreId, movieIds, insert) => {
     try {
-        console.log("SERVICE ID:", theatreId, typeof theatreId);
         // 1️ Check if the theatre exists
         const theatre = await Theatre.findById(theatreId);
         if (!theatre) {
@@ -167,7 +165,7 @@ const updateMoviesInTheatre = async (theatreId, movieIds, insert) => {
         return updatedTheatre;
 
     } catch (error) {
-        // 5️ Handle invalid IDs
+        // 5️⃣ Handle invalid IDs
         if (error.name === 'CastError') {
             return {
                 err: "Invalid Theatre ID format",
@@ -175,7 +173,7 @@ const updateMoviesInTheatre = async (theatreId, movieIds, insert) => {
             };
         }
 
-        // 6️ Log unexpected errors for debugging
+        // 6️⃣ Log unexpected errors for debugging
         console.error("Error in updateMoviesInTheatre:", error);
         throw error;
     }

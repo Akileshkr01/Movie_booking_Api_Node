@@ -96,7 +96,7 @@ const update = async (req, res) => {
         });
     }
 };
-
+console.log("CONTROLLER ID:", req.params.id, typeof req.params.id);
 
 const updateMovies = async (req, res) => {
     try {

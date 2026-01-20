@@ -96,11 +96,10 @@ const update = async (req, res) => {
         });
     }
 };
-
+console.log("CONTROLLER ID:", req.params.id, typeof req.params.id);
 
 const updateMovies = async (req, res) => {
     try {
-        console.log("CONTROLLER ID:", req.params.id, typeof req.params.id);
         const response = await theatreService.updateMoviesInTheatre(
             req.params.id,
             req.body.movieIds,
