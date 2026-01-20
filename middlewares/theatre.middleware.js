@@ -1,23 +1,39 @@
-const { errorResponseBody }= require('../utils/responseBody');
-const validateTheatreCreateRequest = async(req,res,next) => {
-    // validation for the presence of name
-    if(!req.body.name){
-        errorResponseBody.message =" the name of the theatre is not present in the request ";
-        return res.status(400).json(errorResponseBody);
+const { errorResponseBody } = require('../utils/responseBody');
+
+const validateTheatreCreateRequest = (req, res, next) => {
+    const { name, city, pincode } = req.body || {};
+
+    if (!name || !city || !pincode) {
+        return res.status(400).json({
+            ...errorResponseBody,
+            err: "name, city and pincode are required"
+        });
     }
-    //validation for the presence of pincode
-    if(!req.body.pincode){
-        errorResponseBody.message =" the pincode of the theatre is not present in the request";
-        return res.status(400).json(errorResponseBody);
+
+    next();
+};
+
+const validateUpdateMoviesRequest = (req, res, next) => {
+    const { movieIds, insert } = req.body || {};
+
+    if (typeof insert !== 'boolean') {
+        return res.status(400).json({
+            ...errorResponseBody,
+            err: "'insert' must be a boolean value"
+        });
     }
-    //validation for the presence of city
-    if(!req.body.city){
-        errorResponseBody.message = "the city of the theatre is not present in  the request";
-        return res.status(400).json(errorResponseBody);
+
+    if (!Array.isArray(movieIds) || movieIds.length === 0) {
+        return res.status(400).json({
+            ...errorResponseBody,
+            err: "movieIds must be a non-empty array"
+        });
     }
-    next(); // everything is fine move to the next middleware
-}
+
+    next();
+};
 
 module.exports = {
-    validateTheatreCreateRequest
-}
+    validateTheatreCreateRequest,
+    validateUpdateMoviesRequest
+};
