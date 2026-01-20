@@ -176,5 +176,5 @@ module.exports = {
     getTheatres,
     update,
     updateMovies,
-    getMovies
+    
 };

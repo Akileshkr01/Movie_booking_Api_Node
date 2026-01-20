@@ -141,33 +141,9 @@ const updateMovies = async (req, res) => {
     }
 };
 
-const getMovies = async (req, res) => {
-    try {
-        const response = await theatreService.getMoviesInAtheatre(req.params.id);
-
-        if (response?.err) {
-            return res.status(response.code).json({
-                ...errorResponseBody,
-                err: response.err
-            });
-        }
-
-        return res.status(200).json({
-            ...successResponseBody,
-            data: response,
-            message: "Successfully fetched the movies for the theatre"
-        });
-
-    } catch (error) {
-        console.error('Error in getMovies controller:', error);
-
-        return res.status(500).json({
-            ...errorResponseBody,
-            err: error.message || 'Internal server error'
-        });
-    }
-};
-
+const getMovies = async (req,res) => {
+    
+}
 
 module.exports = {
     create,
@@ -175,6 +151,5 @@ module.exports = {
     getTheatre,
     getTheatres,
     update,
-    updateMovies,
-    getMovies
+    updateMovies
 };
