@@ -125,7 +125,7 @@ const updateTheatre = async (id, data) => {
         throw error;
     }
 };
-
+console.log("SERVICE ID:", theatreId, typeof theatreId);
 
 /**
  * Updates movies in a theatre's movies list.
@@ -138,7 +138,6 @@ const updateTheatre = async (id, data) => {
  */
 const updateMoviesInTheatre = async (theatreId, movieIds, insert) => {
     try {
-        console.log("SERVICE ID:", theatreId, typeof theatreId);
         // 1️ Check if the theatre exists
         const theatre = await Theatre.findById(theatreId);
         if (!theatre) {

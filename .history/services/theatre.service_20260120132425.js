@@ -126,20 +126,11 @@ const updateTheatre = async (id, data) => {
     }
 };
 
-
 /**
- * Updates movies in a theatre's movies list.
- * Can either add or remove movies based on the `insert` flag.
- *
- * @param {String} theatreId - The ID of the theatre to update
- * @param {Array} movieIds - Array of movie IDs to add/remove
- * @param {Boolean} insert - If true, movies are added; if false, movies are removed
- * @returns {Object} - Updated theatre document or an error object
+ * Add or remove movies from a theatre
  */
 const updateMoviesInTheatre = async (theatreId, movieIds, insert) => {
     try {
-        console.log("SERVICE ID:", theatreId, typeof theatreId);
-        // 1️ Check if the theatre exists
         const theatre = await Theatre.findById(theatreId);
         if (!theatre) {
             return {
@@ -148,39 +139,31 @@ const updateMoviesInTheatre = async (theatreId, movieIds, insert) => {
             };
         }
 
-        // 2️ Prepare the update query based on insert/remove
-        const updateQuery = insert
-            ? { $addToSet: { movies: { $each: movieIds } } }  // Add movies
-            : { $pull: { movies: { $in: movieIds } } };      // Remove movies
+        if (insert) {
+            await Theatre.updateOne(
+                { _id: theatreId },
+                { $addToSet: { movies: { $each: movieIds } } }
+            );
+        } else {
+            await Theatre.updateOne(
+                { _id: theatreId },
+                { $pull: { movies: { $in: movieIds } } }
+            );
+        }
 
-        // 3️ Perform the update and return the updated document
-        const updatedTheatre = await Theatre.findByIdAndUpdate(
-            theatreId,
-            updateQuery,
-            {
-                new: true,          //  Return the updated theatre
-                runValidators: true // Ensure valid data
-            }
-        ).populate('movies');       // Populate movies field for full objects
-
-        // 4️ Return the updated theatre
+        const updatedTheatre = await Theatre.findById(theatreId).populate('movies');
         return updatedTheatre;
-
     } catch (error) {
-        // 5️ Handle invalid IDs
         if (error.name === 'CastError') {
             return {
                 err: "Invalid Theatre ID format",
                 code: 400
             };
         }
-
-        // 6️ Log unexpected errors for debugging
         console.error("Error in updateMoviesInTheatre:", error);
         throw error;
     }
 };
-
 
 module.exports = {
     createTheatre,

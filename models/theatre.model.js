@@ -17,7 +17,7 @@ const theatreSchema = new mongoose.Schema(
             required: true
         },
 
-        // ✅ REQUIRED for populate('movies')
+       
         movies: [
             {
                 type: mongoose.Schema.Types.ObjectId,

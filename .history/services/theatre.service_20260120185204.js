@@ -125,7 +125,7 @@ const updateTheatre = async (id, data) => {
         throw error;
     }
 };
-
+console.log("SERVICE ID:", theatreId, typeof theatreId);
 
 /**
  * Updates movies in a theatre's movies list.

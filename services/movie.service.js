@@ -1,8 +1,11 @@
 const Movie = require('../models/movie.model');
 
 /**
- * Service to create a movie with Mongoose validation error handling
+ * 
+ * @param  data ->object containing details of the new movie to be deleted
+ * @returns -> returns the new movie obhject created
  */
+
 const createMovie = async (data) => {
     try {
         const movie = await Movie.create(data);
@@ -21,7 +24,9 @@ const createMovie = async (data) => {
 }
 
 /**
- * Service to delete a movie by ID
+ * 
+ * @param  id -> id which will be used to identify the movie to be deleted
+ * @returns ->object containing details  of the movie deleted
  */
 const deleteMovie = async (id) => {
     try {
@@ -42,7 +47,9 @@ const deleteMovie = async (id) => {
 }
 
 /**
- * Service to fetch a single movie by ID with safety checks
+ * 
+ * @param id -> id which will be used to identify the movie to be fetched
+ * @returns -> object containing movie fetched
  */
 const getMovieById = async (id) => {
     try {
@@ -65,22 +72,61 @@ const getMovieById = async (id) => {
 }
 
 /**
- * Service to update movie details
+ * 
+ * @param  id -> id which will be used to identify the movie to be updated
+ * @param  data -> object that contains actual data which is to be updated in the db
+ * @returns -> returns the new updated movie details
  */
+
 const updateMovie = async (id, data) => {
     try {
-        const movie = await Movie.findByIdAndUpdate(id, data, { new: true, runValidators: true });
+        // new: true returns the updated document instead of the old one
+        // runValidators: true ensures the update follows the Schema rules
+        const movie = await Movie.findByIdAndUpdate(id, data, { 
+            new: true, 
+            runValidators: true 
+        });
+
+        // FIXED: Handle case where ID is valid format but movie doesn't exist
+        if (!movie) {
+            return {
+                err: "No movie found for the given ID",
+                code: 404
+            };
+        }
+
         return movie;
     } catch (error) {
-        return {
-            err: error.message,
-            code: 400
-        };
+        // Handle Mongoose Schema Validation errors (e.g., empty required fields)
+        if (error.name === 'ValidationError') {
+            let err = {};
+            Object.keys(error.errors).forEach((key) => {
+                err[key] = error.errors[key].message;
+            });
+            
+            return {
+                err: err, // FIXED: Return the specific field errors
+                code: 422 // Using 422 (Unprocessable Entity) for validation
+            };
+        }
+
+        // Handle CastError (Invalid ID format)
+        if (error.name === 'CastError') {
+            return {
+                err: "Invalid ID format provided",
+                code: 400
+            };
+        }
+
+        console.error("Internal Service Error:", error);
+        throw error;
     }
-} 
+};
 
 /**
- * Service to fetch movies based on filters
+ * 
+ * @param  filter -> filter will help us in filtering  out data based on the conditionals it contains
+ * @returns -> returns an object containing all the movies fetched based on the filter
  */
 const fetchMovies = async (filter) => {
     try {
