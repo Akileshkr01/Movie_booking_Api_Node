@@ -37,7 +37,6 @@ module.exports = (app) => {
     );
 
     app.get(
-        '/mba/api/v1/theatres/:id/movies',
-        theatreController.getMovies
+        
     )
 };

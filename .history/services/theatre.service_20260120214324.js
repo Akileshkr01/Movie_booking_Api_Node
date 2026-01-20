@@ -152,37 +152,17 @@ const updateMoviesInTheatres = async (theatreId, movieIds, insert) => {
 
 const getMoviesInAtheatre = async (id) => {
     try {
-        //  Validate ObjectId
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            return {
-                err: 'Invalid theatre id',
-                code: 400
-            };
-        }
-
-        //  Fetch theatre with movies populated
-        const theatre = await Theatre.findById(
-            id,
-            { name: 1, movies: 1,address: 1 }
-        ).populate('movies');
-
-        if (!theatre) {
-            return {
-                err: 'No theatre with the given id found',
+        const theatre = await Theatre.findById(id,{name:1,movies:1});
+        if(!theatre){
+            return{
+                err:'No theatre with the given id found',
                 code: 404
-            };
+            }
         }
-
-        return theatre;
-
     } catch (error) {
-        console.error('Error in getMoviesInAtheatre:', error);
-        return {
-            err: 'Database error while fetching movies in theatre',
-            code: 500
-        };
+        
     }
-};
+}
 
 module.exports = {
     createTheatre,
@@ -190,7 +170,6 @@ module.exports = {
     getTheatre,
     getAllTheatres,
     updateTheatre,
-    updateMoviesInTheatres,
-    getMoviesInAtheatre
+    updateMoviesInTheatres
 };
 

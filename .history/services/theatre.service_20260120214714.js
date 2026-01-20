@@ -163,7 +163,7 @@ const getMoviesInAtheatre = async (id) => {
         //  Fetch theatre with movies populated
         const theatre = await Theatre.findById(
             id,
-            { name: 1, movies: 1,address: 1 }
+            { name: 1, movies: 1 }
         ).populate('movies');
 
         if (!theatre) {
@@ -191,6 +191,6 @@ module.exports = {
     getAllTheatres,
     updateTheatre,
     updateMoviesInTheatres,
-    getMoviesInAtheatre
+    
 };
 
