@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+
 const Theatre = require('../models/theatre.model');
 const Movie = require('../models/movie.model');
 /**

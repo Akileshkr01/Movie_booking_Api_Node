@@ -1,6 +1,5 @@
-const mongoose = require('mongoose');
 const Theatre = require('../models/theatre.model');
-const Movie = require('../models/movie.model');
+
 /**
  * CREATE THEATRE
  */
@@ -53,47 +52,30 @@ const getTheatre = async (id) => {
  * GET ALL THEATRES
  */
 const getAllTheatres = async (queryParams) => {
-    try {
-        const query = {};
-        const options = {};
+    const query = {};
+    const options = {};
 
-        // Filters
-        if (queryParams.city) query.city = queryParams.city;
-        if (queryParams.pincode) query.pincode = queryParams.pincode;
-        if (queryParams.name) query.name = queryParams.name;
+    // Filters
+    if (queryParams.city) query.city = queryParams.city;
+    if (queryParams.pincode) query.pincode = queryParams.pincode;
+    if (queryParams.name) query.name = queryParams.name;
 
-        // Filter by movieId
-        if (queryParams.movieId) {
-            if (!mongoose.Types.ObjectId.isValid(queryParams.movieId)) {
-                return {
-                    err: "Invalid movieId format",
-                    code: 400
-                };
-            }
-            query.movies = queryParams.movieId;
-        }
-
-        // Limit
-        if (queryParams.limit) {
-            options.limit = parseInt(queryParams.limit, 10);
-        }
-
-        // Pagination (skip is page number)
-        if (queryParams.skip !== undefined) {
-            const perPage = options.limit || 5;
-            options.skip = parseInt(queryParams.skip, 10) * perPage;
-        }
-
-        const theatres = await Theatre.find(query, null, options).populate('movies');
-        return theatres;
-
-    } catch (error) {
-        console.error("Error in getAllTheatres:", error);
-        return {
-            err: "Database error while fetching theatres",
-            code: 500
-        };
+    // Limit 
+    if (queryParams.limit) {
+        options.limit = parseInt(queryParams.limit);
     }
+
+    // Pagination only when skip exists and for first page skip value is 0
+    if (queryParams.skip !== undefined) {
+        const perPage = queryParams.limit
+            ? parseInt(queryParams.limit)
+            : 5;
+
+        // skip is page number
+        options.skip = parseInt(queryParams.skip) * perPage;
+    }
+
+    return Theatre.find(query, null, options);
 };
 
 

@@ -2,7 +2,7 @@ const theatreController = require('../controllers/theatre.controller');
 const theatreMiddleware = require('../middlewares/theatre.middleware');
 
 module.exports = (app) => {
-    console.log(' Theatre routes registered');
+    console.log('✅ Theatre routes registered');
 
     app.post(
         '/mba/api/v1/theatres',

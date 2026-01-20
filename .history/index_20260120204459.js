@@ -23,7 +23,6 @@ app.use((req, res, next) => {
 // For URL-encoded data
 app.use(express.urlencoded({ extended: true }));
 
-mongoose.set('debug',true);
 // ---------------------------
 // Routes
 // ---------------------------
@@ -76,7 +75,7 @@ const startServer = async () => {
     });
 
   } catch (err) {
-    console.error(' MongoDB connection failed:', err.message);
+    console.error('❌ MongoDB connection failed:', err.message);
     process.exit(1); // Exit if DB connection fails
   }
 };

@@ -70,27 +70,16 @@ const getTheatres = async (req, res) => {
     try {
         const response = await theatreService.getAllTheatres(req.query);
 
-        if (response && response.err) {
-            return res.status(response.code).json({
-                ...errorResponseBody,
-                err: response.err
-            });
-        }
-
-        return res.status(200).json({
-            ...successResponseBody,
-            data: response,
-            message: "Successfully fetched all the theatres"
-        });
+        return res.json({ ...successResponseBody, data: response });
 
     } catch (error) {
+        console.error(error);
         return res.status(500).json({
             ...errorResponseBody,
-            err: error.message
+            err: 'Internal server error'
         });
     }
 };
-
 
 const update = async (req, res) => {
     try {

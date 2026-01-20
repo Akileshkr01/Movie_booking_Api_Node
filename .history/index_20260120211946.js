@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 // For URL-encoded data
 app.use(express.urlencoded({ extended: true }));
 
-mongoose.set('debug',true);
+
 // ---------------------------
 // Routes
 // ---------------------------
