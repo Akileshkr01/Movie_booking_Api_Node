@@ -3,21 +3,23 @@ const { successResponseBody, errorResponseBody } = require('../utils/responseBod
 
 const signup = async (req, res) => {
     try {
-        const user = await userService.createUser(req.body);
+        const response = await userService.createUser(req.body);
 
         return res.status(201).json({
             ...successResponseBody,
-            message: 'Successfully registered a user',
-            data: user
+            data: response,
+            message: "Successfully registered a user"
         });
 
     } catch (error) {
-        const statusCode = error.statusCode || 400;
-
-        return res.status(statusCode).json({
+        console.log(error);
+        if(error.err){
+            errorResponseBody.err = error.err;
+            return res.status(error.code).json
+        }
+        return res.status(400).json({
             ...errorResponseBody,
-            message: error.message || 'Something went wrong',
-            err: error.details || error.message
+            err: error.message || error
         });
     }
 };
