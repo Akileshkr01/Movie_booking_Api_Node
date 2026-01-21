@@ -1,32 +1,29 @@
 const User = require('../models/user.model');
-const { USER_ROLE, USER_STATUS } = require('../utils/constants');
-
+const { } = require('../utils/constants')
 const createUser = async (data) => {
     try {
         // ---------------------------
-        // Normalize input
+        // Business Rules Validation
         // ---------------------------
-        const userRole = data.userRole || USER_ROLE.CUSTOMER;
-        let userStatus = data.userStatus || USER_STATUS.APPROVED;
 
-        // ---------------------------
-        // Business rules validation
-        // ---------------------------
+        const userRole = data.userRole || 'CUSTOMER';
+
+        let userStatus = data.userStatus || 'Approved';
 
         // CUSTOMER cannot set custom status
-        if (userRole === USER_ROLE.CUSTOMER && data.userStatus && data.userStatus !== USER_STATUS.APPROVED) {
+        if (userRole === 'CUSTOMER' && data.userStatus && data.userStatus !== 'Approved') {
             const err = new Error('Customer cannot set custom user status');
             err.statusCode = 400;
             throw err;
         }
 
         // Non-customer users are always Pending
-        if (userRole !== USER_ROLE.CUSTOMER) {
-            userStatus = USER_STATUS.PENDING;
+        if (userRole !== 'CUSTOMER') {
+            userStatus = 'Pending';
         }
 
         // ---------------------------
-        // Create user in DB
+        // Create User
         // ---------------------------
         const user = await User.create({
             name: data.name,
@@ -46,7 +43,7 @@ const createUser = async (data) => {
 
     } catch (error) {
         // ---------------------------
-        // Mongoose validation errors (includes enum errors)
+        // Mongoose validation errors
         // ---------------------------
         if (error.name === 'ValidationError') {
             const validationErrors = {};
@@ -70,7 +67,7 @@ const createUser = async (data) => {
         }
 
         // ---------------------------
-        // Forward any other error
+        // Forward known errors
         // ---------------------------
         throw error;
     }

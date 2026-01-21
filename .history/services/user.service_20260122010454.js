@@ -10,11 +10,15 @@ const createUser = async (data) => {
         let userStatus = data.userStatus || USER_STATUS.APPROVED;
 
         // ---------------------------
-        // Business rules validation
+        // Business rules
         // ---------------------------
 
         // CUSTOMER cannot set custom status
-        if (userRole === USER_ROLE.CUSTOMER && data.userStatus && data.userStatus !== USER_STATUS.APPROVED) {
+        if (
+            userRole === USER_ROLE.CUSTOMER &&
+            data.userStatus &&
+            data.userStatus !== USER_STATUS.APPROVED
+        ) {
             const err = new Error('Customer cannot set custom user status');
             err.statusCode = 400;
             throw err;
@@ -26,7 +30,7 @@ const createUser = async (data) => {
         }
 
         // ---------------------------
-        // Create user in DB
+        // Create user
         // ---------------------------
         const user = await User.create({
             name: data.name,
@@ -37,7 +41,7 @@ const createUser = async (data) => {
         });
 
         // ---------------------------
-        // Remove password from response
+        // Remove password
         // ---------------------------
         const userObj = user.toObject();
         delete userObj.password;
@@ -45,9 +49,7 @@ const createUser = async (data) => {
         return userObj;
 
     } catch (error) {
-        // ---------------------------
-        // Mongoose validation errors (includes enum errors)
-        // ---------------------------
+        // Validation error
         if (error.name === 'ValidationError') {
             const validationErrors = {};
             Object.keys(error.errors).forEach((key) => {
@@ -60,18 +62,13 @@ const createUser = async (data) => {
             throw err;
         }
 
-        // ---------------------------
         // Duplicate email
-        // ---------------------------
         if (error.code === 11000) {
             const err = new Error('Email already exists');
             err.statusCode = 409;
             throw err;
         }
 
-        // ---------------------------
-        // Forward any other error
-        // ---------------------------
         throw error;
     }
 };

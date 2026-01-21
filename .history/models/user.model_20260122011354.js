@@ -22,22 +22,16 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        minlength: [6, 'Password must be at least 6 characters long']
+        minlength: 6
     },
     userRole: {
         type: String,
-        enum: {
-            values: Object.values(USER_ROLE),
-            message: 'Invalid user role'
-        },
+        enum: Object.values(USER_ROLE),
         default: USER_ROLE.CUSTOMER
     },
     userStatus: {
         type: String,
-        enum: {
-            values: Object.values(USER_STATUS),
-            message: 'Invalid user status'
-        },
+        enum:{} Object.values(USER_STATUS),
         default: USER_STATUS.APPROVED
     }
 }, { timestamps: true });
@@ -47,7 +41,12 @@ const userSchema = new mongoose.Schema({
  */
 userSchema.pre('save', async function () {
     if (!this.isModified('password')) return;
-    this.password = await bcrypt.hash(this.password, 10);
+
+    try {
+        this.password = await bcrypt.hash(this.password, 10);
+    } catch (error) {
+        throw error;
+    }
 });
 
 module.exports = mongoose.model('User', userSchema);

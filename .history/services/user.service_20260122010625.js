@@ -4,17 +4,28 @@ const { USER_ROLE, USER_STATUS } = require('../utils/constants');
 const createUser = async (data) => {
     try {
         // ---------------------------
-        // Normalize input
+        // Normalize & validate role
         // ---------------------------
         const userRole = data.userRole || USER_ROLE.CUSTOMER;
+
+        if (!Object.values(USER_ROLE).includes(userRole)) {
+            const err = new Error('Invalid user role');
+            err.statusCode = 400;
+            throw err;
+        }
+
         let userStatus = data.userStatus || USER_STATUS.APPROVED;
 
         // ---------------------------
-        // Business rules validation
+        // Business rules
         // ---------------------------
 
         // CUSTOMER cannot set custom status
-        if (userRole === USER_ROLE.CUSTOMER && data.userStatus && data.userStatus !== USER_STATUS.APPROVED) {
+        if (
+            userRole === USER_ROLE.CUSTOMER &&
+            data.userStatus &&
+            data.userStatus !== USER_STATUS.APPROVED
+        ) {
             const err = new Error('Customer cannot set custom user status');
             err.statusCode = 400;
             throw err;
@@ -26,7 +37,7 @@ const createUser = async (data) => {
         }
 
         // ---------------------------
-        // Create user in DB
+        // Create user
         // ---------------------------
         const user = await User.create({
             name: data.name,
@@ -46,7 +57,7 @@ const createUser = async (data) => {
 
     } catch (error) {
         // ---------------------------
-        // Mongoose validation errors (includes enum errors)
+        // Mongoose validation errors
         // ---------------------------
         if (error.name === 'ValidationError') {
             const validationErrors = {};
@@ -70,7 +81,7 @@ const createUser = async (data) => {
         }
 
         // ---------------------------
-        // Forward any other error
+        // Forward known errors
         // ---------------------------
         throw error;
     }
