@@ -7,35 +7,36 @@ require('dotenv').config();
 // ---------------------------
 const movieRoutes = require('./routes/movie.routes');
 const theatreRoutes = require('./routes/theatre.routes');
-const authRoutes = require('./routes/auth.routes');
-
+const 
 const app = express();
 
 // ---------------------------
 // Middleware
 // ---------------------------
-app.use(express.json()); // Handles all HTTP methods safely
+
+// Skip JSON parsing for GET requests to prevent empty body errors
+app.use((req, res, next) => {
+  if (req.method === 'GET') return next();
+  express.json()(req, res, next);
+});
+
+// For URL-encoded data
 app.use(express.urlencoded({ extended: true }));
 
-// Enable mongoose debug only in development
-if (process.env.NODE_ENV === 'development') {
-  mongoose.set('debug', true);
-}
-
+mongoose.set('debug',true);
 // ---------------------------
 // Routes
 // ---------------------------
 movieRoutes(app);
 theatreRoutes(app);
-authRoutes(app);
 
 // ---------------------------
 // Test Route
 // ---------------------------
 app.get('/home', (req, res) => {
-  res.status(200).json({
+  res.json({
     success: true,
-    message: 'API is running and routes are registered',
+    message: 'API is running and Movie/Theatre routes are registered',
   });
 });
 
@@ -43,10 +44,10 @@ app.get('/home', (req, res) => {
 // Handle invalid JSON errors
 // ---------------------------
 app.use((err, req, res, next) => {
-  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+  if (err instanceof SyntaxError && 'body' in err) {
     return res.status(400).json({
       success: false,
-      message: 'Invalid JSON body',
+      err: 'Invalid JSON body',
     });
   }
   next(err);
@@ -59,25 +60,26 @@ const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
   try {
+    // Read DB_URL from .env and trim spaces
     const dbUrl = process.env.DB_URL?.trim();
     if (!dbUrl) {
       throw new Error('DB_URL is not defined in .env');
     }
 
-    await mongoose.connect(dbUrl);
-    console.log('Connected to MongoDB:', mongoose.connection.name);
+    // Connect to MongoDB (Mongoose 7+)
+    await mongoose.connect(dbUrl); // No deprecated options needed
+    console.log(' Connected to MongoDB:', mongoose.connection.name);
 
+    // Start Express server
     app.listen(PORT, () => {
-      console.log(`Server started on port ${PORT}`);
+      console.log(` Server started on port ${PORT}`);
     });
 
   } catch (err) {
-    console.error('MongoDB connection failed:', err.message);
-    process.exit(1);
+    console.error(' MongoDB connection failed:', err.message);
+    process.exit(1); // Exit if DB connection fails
   }
 };
 
-// ---------------------------
-// Start Server
-// ---------------------------
+// Start the server
 startServer();
