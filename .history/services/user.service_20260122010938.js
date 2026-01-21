@@ -4,29 +4,39 @@ const { USER_ROLE, USER_STATUS } = require('../utils/constants');
 const createUser = async (data) => {
     try {
         // ---------------------------
-        // Normalize input
+        // Normalize & validate role
         // ---------------------------
         const userRole = data.userRole || USER_ROLE.CUSTOMER;
+
+        if (!Object.values(USER_ROLE).includes(userRole)) {
+            const err = new Error(
+                `Invalid user role. Allowed values are: ${Object.values(USER_ROLE).join(', ')}`
+            );
+            err.statusCode = 422;
+            throw err;
+        }
+
         let userStatus = data.userStatus || USER_STATUS.APPROVED;
 
         // ---------------------------
-        // Business rules validation
+        // Business rules
         // ---------------------------
-
-        // CUSTOMER cannot set custom status
-        if (userRole === USER_ROLE.CUSTOMER && data.userStatus && data.userStatus !== USER_STATUS.APPROVED) {
+        if (
+            userRole === USER_ROLE.CUSTOMER &&
+            data.userStatus &&
+            data.userStatus !== USER_STATUS.APPROVED
+        ) {
             const err = new Error('Customer cannot set custom user status');
             err.statusCode = 400;
             throw err;
         }
 
-        // Non-customer users are always Pending
         if (userRole !== USER_ROLE.CUSTOMER) {
             userStatus = USER_STATUS.PENDING;
         }
 
         // ---------------------------
-        // Create user in DB
+        // Create user
         // ---------------------------
         const user = await User.create({
             name: data.name,
@@ -36,18 +46,13 @@ const createUser = async (data) => {
             userStatus
         });
 
-        // ---------------------------
-        // Remove password from response
-        // ---------------------------
         const userObj = user.toObject();
         delete userObj.password;
 
         return userObj;
 
     } catch (error) {
-        // ---------------------------
-        // Mongoose validation errors (includes enum errors)
-        // ---------------------------
+        // Mongoose validation errors
         if (error.name === 'ValidationError') {
             const validationErrors = {};
             Object.keys(error.errors).forEach((key) => {
@@ -60,18 +65,13 @@ const createUser = async (data) => {
             throw err;
         }
 
-        // ---------------------------
         // Duplicate email
-        // ---------------------------
         if (error.code === 11000) {
             const err = new Error('Email already exists');
             err.statusCode = 409;
             throw err;
         }
 
-        // ---------------------------
-        // Forward any other error
-        // ---------------------------
         throw error;
     }
 };

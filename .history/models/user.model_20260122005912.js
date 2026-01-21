@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const { USER_ROLE, USER_STATUS } = require('../utils/constants');
-
+const {USER_ROLE} = require('../utils/constants')
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -13,38 +12,25 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true,
         lowercase: true,
-        trim: true,
-        match: [
-            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-            'Please provide a valid email'
-        ]
+        trim: true
     },
     password: {
         type: String,
         required: true,
-        minlength: [6, 'Password must be at least 6 characters long']
+        minlength: 6
     },
     userRole: {
         type: String,
-        enum: {
-            values: Object.values(USER_ROLE),
-            message: 'Invalid user role'
-        },
-        default: USER_ROLE.CUSTOMER
+        enum: ['CUSTOMER', 'ADMIN', 'CLIENT'],
+        default: 'CUSTOMER'
     },
     userStatus: {
         type: String,
-        enum: {
-            values: Object.values(USER_STATUS),
-            message: 'Invalid user status'
-        },
-        default: USER_STATUS.APPROVED
+        enum: ['Approved', 'Pending', 'Blocked'],
+        default: 'Approved'
     }
 }, { timestamps: true });
 
-/**
- * Hash password before save
- */
 userSchema.pre('save', async function () {
     if (!this.isModified('password')) return;
     this.password = await bcrypt.hash(this.password, 10);
