@@ -58,54 +58,16 @@ const signin = async (req, res) => {
         return res.status(500).json(errorResponseBody);
     }
 };
-const resetPassword = async (req, res) => {
+
+const resetPassword = async (req,res) => {
     try {
-        const { oldPassword, newPassword } = req.body;
-
-        if (!oldPassword || !newPassword) {
-            return res.status(400).json({
-                success: false,
-                err: "Old password and new password are required",
-                data: {}
-            });
+        const user = await userService.getUserById(req.body.id);
+        const isOldPasswordCorrect = await user.isValidPassword(req.body.oldPassword);
+        if(!isOldPasswordCorrect){
+            throw {err:'Invalid old password , please write the correct old password', code:403};
         }
-
-        // user is already attached by isAuthenticated middleware
-        const user = await userService.getUserById(req.user.id);
-
-        const isOldPasswordCorrect = await user.isValidPassword(oldPassword);
-        if (!isOldPasswordCorrect) {
-            return res.status(403).json({
-                success: false,
-                err: "Invalid old password, please provide the correct password",
-                data: {}
-            });
-        }
-
-        // update password (hashed via pre-save hook)
-        user.password = newPassword;
-        await user.save();
-
-        return res.status(200).json({
-            success: true,
-            message: "Successfully updated the password",
-            data: {
-                id: user._id,
-                email: user.email
-            }
-        });
-
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            err: "Internal Server Error",
-            data: {}
-        });
-    }
-};
-
-module.exports = {
+        await user.updateOne({password: req.body.newPassword})
+    } catch(error)
     signup,
-    signin,
-    resetPassword
+    signin
 };
