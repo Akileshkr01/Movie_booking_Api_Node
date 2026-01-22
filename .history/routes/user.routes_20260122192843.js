@@ -1,0 +1,5 @@
+const userController = require('../controllers/user.controller');
+
+const route = (app) => {
+    app.patch()
+}

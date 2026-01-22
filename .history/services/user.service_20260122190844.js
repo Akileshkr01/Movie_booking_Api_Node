@@ -107,55 +107,27 @@ const getUserById = async (id) => {
 };
 
 
-const updateUserRoleOrStatus = async (data, userId) => {
-    try {
-        if (!data || typeof data !== "object") {
-            throw { err: "Invalid update data", code: 400 };
-        }
+const updateUserRoleOrStatus = async (data,userId) => {
+    try{
+        let updateQuery = {};
 
-        const updateQuery = {};
+        if(data.userRole)updateQuery.userRole = data.userRole;
+        if(data.userStatus)updateQuery.userStatus = data.userStatus;
 
-        if (data.userRole) updateQuery.userRole = data.userRole;
-        if (data.userStatus) updateQuery.userStatus = data.userStatus;
+        let response = await User.findOneAndUpdate({
+            id: userId
+        }, updateQuery);
 
-        if (Object.keys(updateQuery).length === 0) {
-            throw { err: "No valid fields provided to update", code: 400 };
-        }
+        
+    } catch(error){
 
-        const updatedUser = await User.findByIdAndUpdate(
-            userId,
-            updateQuery,
-            {
-                new: true,
-                runValidators: true
-            }
-        );
-
-        if (!updatedUser) {
-            throw { err: "No user found for the given id", code: 404 };
-        }
-
-        return updatedUser;
-
-    } catch (error) {
-        if (error.name === "ValidationError") {
-            const validationErrors = {};
-            Object.keys(error.errors).forEach(key => {
-                validationErrors[key] = error.errors[key].message;
-            });
-
-            throw { err: validationErrors, code: 400 };
-        }
-
-        throw error;
     }
-};
 
 
+}
 
 module.exports = {
     createUser,
     getUserByEmail,
-    getUserById,
-    updateUserRoleOrStatus
+    getUserById 
 };

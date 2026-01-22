@@ -8,7 +8,7 @@ require('dotenv').config();
 const movieRoutes = require('./routes/movie.routes');
 const theatreRoutes = require('./routes/theatre.routes');
 const authRoutes = require('./routes/auth.routes');
-const userRoutes = require('./routes/user.routes');
+const userRoutes = require(' ./routes/user.routes');
 const app = express();
 
 // ---------------------------

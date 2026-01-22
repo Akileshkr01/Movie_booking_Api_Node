@@ -28,7 +28,7 @@ if (process.env.NODE_ENV === 'development') {
 movieRoutes(app);
 theatreRoutes(app);
 authRoutes(app);
-userRoutes(app);
+
 // ---------------------------
 // Test Route
 // ---------------------------
