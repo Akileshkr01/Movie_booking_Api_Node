@@ -120,35 +120,27 @@ const isAuthenticated = async (req, res, next) => {
 };
 
  
-const validateResetPasswordRequest = (req, res, next) => {
-    const { oldPassword, newPassword } = req.body;
+const validateResetPasswordRequest = async (req,res,next) => {
 
     // validate old password presence
-    if (!oldPassword || oldPassword.trim() === "") {
-        return res.status(400).json({
-            success: false,
-            err: "Missing the old password in the request",
-            data: {}
-        });
+    if(!req.body.oldPassword){
+        errorResponseBody.err = 'Missing the old password in the request ';
+        return res.status(400).json(errorResponseBody);
     }
 
     // validate new password presence
-    if (!newPassword || newPassword.trim() === "") {
-        return res.status(400).json({
-            success: false,
-            err: "Missing the new password in the request",
-            data: {}
-        });
+    if(!req.body.newPassword){
+        errorResponseBody.err = 'Missing the new password in the request ';
+        return res.status(400).json(errorResponseBody);
     }
 
-    // request is valid
-    return next();
-};
+    // we can procced
+    next();
 
+}
 
 module.exports = {
     validateSignupRequest,
     validateSigninRequest,
-    isAuthenticated,
-    validateResetPasswordRequest 
+    isAuthenticated
 };
