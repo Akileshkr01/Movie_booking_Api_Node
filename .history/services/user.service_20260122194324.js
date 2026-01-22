@@ -109,10 +109,6 @@ const getUserById = async (id) => {
 
 const updateUserRoleOrStatus = async (data, userId) => {
     try {
-        if (!data || typeof data !== "object") {
-            throw { err: "Invalid update data", code: 400 };
-        }
-
         const updateQuery = {};
 
         if (data.userRole) updateQuery.userRole = data.userRole;
@@ -126,8 +122,8 @@ const updateUserRoleOrStatus = async (data, userId) => {
             userId,
             updateQuery,
             {
-                new: true,
-                runValidators: true
+                new: true,          // return updated document
+                runValidators: true // enforce enum validation
             }
         );
 
@@ -138,19 +134,12 @@ const updateUserRoleOrStatus = async (data, userId) => {
         return updatedUser;
 
     } catch (error) {
-        if (error.name === "ValidationError") {
-            const validationErrors = {};
-            Object.keys(error.errors).forEach(key => {
-                validationErrors[key] = error.errors[key].message;
-            });
-
-            throw { err: validationErrors, code: 400 };
+        if(error.name == 'ValidationError'){
+            throw {err: 'the properties does validate the constraints, please check'}
         }
-
         throw error;
     }
 };
-
 
 
 module.exports = {
