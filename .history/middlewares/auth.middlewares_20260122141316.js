@@ -1,9 +1,9 @@
 const { errorResponseBody } = require('../utils/responseBody');
 /**
  * validate for user signup
- * @param  req -> http request object
- * @param  res  -> http response object
- * @param  next -> next middleware
+ * @param  req -> 
+ * @param  res 
+ * @param  next 
  * @returns 
  */
 const validateSignupRequest = (req, res, next) => {
@@ -44,31 +44,6 @@ const validateSignupRequest = (req, res, next) => {
     next();
 };
 
-
-const validateSigninRequest = async (req, res, next) => {
-    // validate user email presence
-    if (!req.body.email) {
-        return res.status(400).json({
-            success: false,
-            err: "No email provided for sign in",
-            data: {}
-        });
-    }
-
-    // validate user password presence
-    if (!req.body.password) {
-        return res.status(400).json({
-            success: false,
-            err: "No password provided for sign in",
-            data: {}
-        });
-    }
-
-    // request is valid
-    return next();
-};
-
 module.exports = {
-    validateSignupRequest,
-    validateSigninRequest
+    validateSignupRequest
 };
