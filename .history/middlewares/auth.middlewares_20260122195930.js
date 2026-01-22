@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 const userService = require("../services/user.service");
-const { errorResponseBody } = require("../utils/responseBody");
 
 /**
  * Validate user signup request
@@ -119,36 +118,11 @@ const isAuthenticated = async (req, res, next) => {
     }
 };
 
- 
-const validateResetPasswordRequest = (req, res, next) => {
-    const { oldPassword, newPassword } = req.body;
 
-    // validate old password presence
-    if (!oldPassword || oldPassword.trim() === "") {
-        return res.status(400).json({
-            success: false,
-            err: "Missing the old password in the request",
-            data: {}
-        });
-    }
-
-    // validate new password presence
-    if (!newPassword || newPassword.trim() === "") {
-        return res.status(400).json({
-            success: false,
-            err: "Missing the new password in the request",
-            data: {}
-        });
-    }
-
-    // request is valid
-    return next();
-};
-
+const validateResetPasswordRequest = async (req,res)
 
 module.exports = {
     validateSignupRequest,
     validateSigninRequest,
-    isAuthenticated,
-    validateResetPasswordRequest 
+    isAuthenticated
 };
