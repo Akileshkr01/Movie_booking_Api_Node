@@ -1,55 +1,55 @@
-const jwt = require("jsonwebtoken");
-const userService = require("../services/user.service");
-
+const jwt = require('jsonwebtoken');
+const { errorResponseBody } = require('../utils/responseBody');
+const userService = require('../services/user.service');
 /**
- * Validate user signup request
+ * validate for user signup
+ * @param  req -> http request object
+ * @param  res  -> http response object
+ * @param  next -> next middleware
+ * @returns 
  */
 const validateSignupRequest = (req, res, next) => {
-    const { name, email, password } = req.body;
-
-    if (!name || name.trim() === "") {
+    // Validate name
+    if (!req.body.name) {
         return res.status(400).json({
-            success: false,
-            err: "Name of the user is required",
-            data: {}
+            ...errorResponseBody,
+            err: 'Name of the user is required'
         });
     }
 
-    if (!email || email.trim() === "") {
+    // Validate email presence
+    if (!req.body.email) {
         return res.status(400).json({
-            success: false,
-            err: "Email of the user is required",
-            data: {}
+            ...errorResponseBody,
+            err: 'Email of the user is required'
         });
     }
 
+    // Validate email format
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(req.body.email)) {
         return res.status(400).json({
-            success: false,
-            err: "Invalid email format",
-            data: {}
+            ...errorResponseBody,
+            err: 'Invalid email format'
         });
     }
 
-    if (!password || password.trim() === "") {
+    // Validate password presence
+    if (!req.body.password) {
         return res.status(400).json({
-            success: false,
-            err: "Password of the user is required",
-            data: {}
+            ...errorResponseBody,
+            err: 'Password of the user is required'
         });
     }
 
-    return next();
+    // Request is valid
+    next();
 };
 
-/**
- * Validate user signin request
- */
-const validateSigninRequest = (req, res, next) => {
-    const { email, password } = req.body;
 
-    if (!email || email.trim() === "") {
+const validateSigninRequest = async (req, res, next) => {
+    // validate user email presence
+    if (!req.body.email) {
         return res.status(400).json({
             success: false,
             err: "No email provided for sign in",
@@ -57,7 +57,8 @@ const validateSigninRequest = (req, res, next) => {
         });
     }
 
-    if (!password || password.trim() === "") {
+    // validate user password presence
+    if (!req.body.password) {
         return res.status(400).json({
             success: false,
             err: "No password provided for sign in",
@@ -65,17 +66,14 @@ const validateSigninRequest = (req, res, next) => {
         });
     }
 
+    // request is valid
     return next();
 };
 
-/**
- * Authentication middleware
- */
+
 const isAuthenticated = async (req, res, next) => {
     try {
-        // Recommended header format: Authorization: Bearer <token>
-        const authHeader = req.headers.authorization;
-        const token = authHeader?.split(" ")[1];
+        const token = req.headers["x-access-token"];
 
         if (!token) {
             return res.status(401).json({
@@ -85,11 +83,13 @@ const isAuthenticated = async (req, res, next) => {
             });
         }
 
+        // verify token (throws error if invalid/expired)
         const decoded = jwt.verify(token, process.env.AUTH_KEY);
 
         const user = await userService.getUserById(decoded.id);
 
-        req.user = user; // attach full user
+        // attach full user object to request
+        req.user = user;
 
         return next();
 
@@ -123,3 +123,4 @@ module.exports = {
     validateSigninRequest,
     isAuthenticated
 };
+ 
