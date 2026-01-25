@@ -1,5 +1,5 @@
 const User = require('../models/user.model');
-const { USER_ROLE, USER_STATUS, STATUS } = require('../utils/constants');
+const { USER_ROLE, USER_STATUS, } = require('../utils/constants');
 
 /**
  * Create a new user
@@ -13,7 +13,7 @@ const createUser = async (data) => {
         // Validate customer status
         if (userRole === USER_ROLE.CUSTOMER && data.userStatus && data.userStatus !== USER_STATUS.APPROVED) {
             const err = new Error('Customer cannot set custom user status');
-            err.statusCode = STATUS.BAD_REQUEST;
+            err.statusCode = 400;
             throw err;
         }
 
@@ -48,7 +48,7 @@ const createUser = async (data) => {
             });
 
             const err = new Error('Validation failed');
-            err.statusCode = STATUS.UNPROCESSABLE_ENTITY;
+            err.statusCode = 422;
             err.details = validationErrors;
             throw err;
         }
@@ -56,7 +56,7 @@ const createUser = async (data) => {
         // Handle duplicate email error
         if (error.code === 11000) {
             const err = new Error('Email already exists');
-            err.statusCode = STATUS.CONFLICT;
+            err.statusCode = 409;
             throw err;
         }
 
@@ -67,7 +67,7 @@ const createUser = async (data) => {
 
         // Generic server error
         const err = new Error('Failed to create user');
-        err.statusCode = STATUS.INTERNAL_SERVER_ERROR;
+        err.statusCode = 500;
         err.details = { original: error.message };
         throw err;
     }
@@ -82,7 +82,7 @@ const getUserByEmail = async (email) => {
 
         if (!user) {
             const err = new Error("No user found for the given email");
-            err.statusCode = STATUS.NOT_FOUND;
+            err.statusCode = 404;
             throw err;
         }
 
@@ -97,7 +97,7 @@ const getUserByEmail = async (email) => {
         // Database error
         console.error('Get user by email error:', error);
         const err = new Error('Failed to fetch user');
-        err.statusCode = STATUS.INTERNAL_SERVER_ERROR;
+        err.statusCode = 500;
         throw err;
     }
 };
@@ -111,7 +111,7 @@ const getUserById = async (id) => {
 
         if (!user) {
             const err = new Error("No user found for the given id");
-            err.statusCode = STATUS.NOT_FOUND;
+            err.statusCode = 404;
             throw err;
         }
 
@@ -126,14 +126,14 @@ const getUserById = async (id) => {
         // Handle invalid ObjectId
         if (error.name === 'CastError') {
             const err = new Error('Invalid user ID format');
-            err.statusCode = STATUS.BAD_REQUEST;
+            err.statusCode = 400;
             throw err;
         }
 
         // Database error
         console.error('Get user by ID error:', error);
         const err = new Error('Failed to fetch user');
-        err.statusCode = STATUS.INTERNAL_SERVER_ERROR;
+        err.statusCode = 500;
         throw err;
     }
 };
@@ -146,7 +146,7 @@ const updateUserRoleOrStatus = async (data, userId) => {
         // Validate input
         if (!data || typeof data !== "object") {
             const err = new Error("Invalid update data");
-            err.statusCode = STATUS.BAD_REQUEST;
+            err.statusCode = 400;
             throw err;
         }
 
@@ -157,7 +157,7 @@ const updateUserRoleOrStatus = async (data, userId) => {
 
         if (Object.keys(updateQuery).length === 0) {
             const err = new Error("No valid fields provided to update");
-            err.statusCode = STATUS.BAD_REQUEST;
+            err.statusCode = 400;
             throw err;
         }
 
@@ -170,7 +170,7 @@ const updateUserRoleOrStatus = async (data, userId) => {
 
         if (!updatedUser) {
             const err = new Error("No user found for the given id");
-            err.statusCode = STATUS.NOT_FOUND;
+            err.statusCode = 404;
             throw err;
         }
 
@@ -194,7 +194,7 @@ const updateUserRoleOrStatus = async (data, userId) => {
             });
 
             const err = new Error('Validation failed');
-            err.statusCode = STATUS.UNPROCESSABLE_ENTITY;
+            err.statusCode = 422;
             err.details = validationErrors;
             throw err;
         }
@@ -202,14 +202,14 @@ const updateUserRoleOrStatus = async (data, userId) => {
         // Handle invalid ObjectId
         if (error.name === 'CastError') {
             const err = new Error('Invalid user ID format');
-            err.statusCode = STATUS.BAD_REQUEST;
+            err.statusCode = 400;
             throw err;
         }
 
         // Database error
         console.error('Update user error:', error);
         const err = new Error('Failed to update user');
-        err.statusCode = STATUS.INTERNAL_SERVER_ERROR;
+        err.statusCode = 500;
         throw err;
     }
 };
