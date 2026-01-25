@@ -7,7 +7,7 @@ module.exports = (app) => {
     app.post(
         '/mba/api/v1/theatres',
         authMiddleware.isAuthenticated,
-        authMiddleware.isAdminOrClient,
+        authMiddl
         theatreMiddleware.validateTheatreCreateRequest,
         theatreController.create
     );
