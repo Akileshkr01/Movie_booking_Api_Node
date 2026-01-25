@@ -15,7 +15,7 @@ module.exports = (app) => {
     app.delete(
         '/mba/api/v1/theatres/:id',
         authMiddleware.isAuthenticated,
-        authMiddleware.isAdminOrClient,
+        auth
         theatreController.destroy
     );
 
