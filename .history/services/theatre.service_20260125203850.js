@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 const Theatre = require('../models/theatre.model');
 const Movie = require('../models/movie.model');
-const { STATUS } = require('../utils/constants');
-
+const {} = require('../utils/consta')
 /**
  * CREATE THEATRE
  */
@@ -15,7 +14,7 @@ const createTheatre = async (data) => {
             Object.keys(error.errors).forEach(key => {
                 err[key] = error.errors[key].message;
             });
-            return { err, code: STATUS.UNPROCESSABLE_ENTITY };
+            return { err, code: 422 };
         }
         throw error;
     }
@@ -28,11 +27,11 @@ const deleteTheatre = async (id) => {
     try {
         const response = await Theatre.findByIdAndDelete(id);
         if (!response) {
-            return { err: "No theatre found", code: STATUS.NOT_FOUND };
+            return { err: "No theatre found", code: 404 };
         }
         return response;
     } catch {
-        return { err: "Invalid theatre ID", code: STATUS.BAD_REQUEST };
+        return { err: "Invalid theatre ID", code: 400 };
     }
 };
 
@@ -43,11 +42,11 @@ const getTheatre = async (id) => {
     try {
         const response = await Theatre.findById(id);
         if (!response) {
-            return { err: "No theatre found", code: STATUS.NOT_FOUND };
+            return { err: "No theatre found", code: 404 };
         }
         return response;
     } catch {
-        return { err: "Invalid theatre ID", code: STATUS.BAD_REQUEST };
+        return { err: "Invalid theatre ID", code: 400 };
     }
 };
 
@@ -59,39 +58,45 @@ const getAllTheatres = async (queryParams) => {
         const query = {};
         const options = {};
 
+        // Filters
         if (queryParams.city) query.city = queryParams.city;
         if (queryParams.pincode) query.pincode = queryParams.pincode;
         if (queryParams.name) query.name = queryParams.name;
 
+        // Filter by movieId
         if (queryParams.movieId) {
             if (!mongoose.Types.ObjectId.isValid(queryParams.movieId)) {
                 return {
                     err: "Invalid movieId format",
-                    code: STATUS.BAD_REQUEST
+                    code: 400
                 };
             }
             query.movies = queryParams.movieId;
         }
 
+        // Limit
         if (queryParams.limit) {
             options.limit = parseInt(queryParams.limit, 10);
         }
 
+        // Pagination (skip is page number)
         if (queryParams.skip !== undefined) {
             const perPage = options.limit || 5;
             options.skip = parseInt(queryParams.skip, 10) * perPage;
         }
 
-        return await Theatre.find(query, null, options).populate('movies');
+        const theatres = await Theatre.find(query, null, options).populate('movies');
+        return theatres;
 
     } catch (error) {
         console.error("Error in getAllTheatres:", error);
         return {
             err: "Database error while fetching theatres",
-            code: STATUS.INTERNAL_SERVER_ERROR
+            code: 500
         };
     }
 };
+
 
 /**
  * UPDATE THEATRE
@@ -104,23 +109,26 @@ const updateTheatre = async (id, data) => {
         });
 
         if (!response) {
-            return { err: "No theatre found", code: STATUS.NOT_FOUND };
+            return { err: "No theatre found", code: 404 };
         }
 
         return response;
 
     } catch (error) {
+        // Mongoose validation error
         if (error.name === 'ValidationError') {
             const err = {};
             Object.keys(error.errors).forEach(key => {
                 err[key] = error.errors[key].message;
             });
-            return { err, code: STATUS.UNPROCESSABLE_ENTITY };
+            return { err, code: 422 };
         }
 
-        return { err: "Invalid theatre ID", code: STATUS.BAD_REQUEST };
+        // Invalid ObjectId or other errors
+        return { err: "Invalid theatre ID", code: 400 };
     }
 };
+
 
 /**
  * UPDATE MOVIES IN THEATRE
@@ -128,7 +136,7 @@ const updateTheatre = async (id, data) => {
 const updateMoviesInTheatres = async (theatreId, movieIds, insert) => {
     const theatre = await Theatre.findById(theatreId);
     if (!theatre) {
-        return { err: "No theatre found", code: STATUS.NOT_FOUND };
+        return { err: "No theatre found", code: 404 };
     }
 
     if (insert) {
@@ -140,30 +148,29 @@ const updateMoviesInTheatres = async (theatreId, movieIds, insert) => {
     }
 
     await theatre.save();
-    return theatre.populate('movies');
+    return theatre.populate('movies'  );
 };
 
-/**
- * GET MOVIES IN A THEATRE
- */
 const getMoviesInAtheatre = async (id) => {
     try {
+        //  Validate ObjectId
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return {
                 err: 'Invalid theatre id',
-                code: STATUS.BAD_REQUEST
+                code: 400
             };
         }
 
+        //  Fetch theatre with movies populated
         const theatre = await Theatre.findById(
             id,
-            { name: 1, movies: 1, address: 1 }
+            { name: 1, movies: 1,address: 1 }
         ).populate('movies');
 
         if (!theatre) {
             return {
                 err: 'No theatre with the given id found',
-                code: STATUS.NOT_FOUND
+                code: 404
             };
         }
 
@@ -173,23 +180,19 @@ const getMoviesInAtheatre = async (id) => {
         console.error('Error in getMoviesInAtheatre:', error);
         return {
             err: 'Database error while fetching movies in theatre',
-            code: STATUS.INTERNAL_SERVER_ERROR
+            code: 500
         };
     }
 };
 
-/**
- * CHECK MOVIE IN A THEATRE
- */
 const checkMovieInATheatre = async (theatreId, movieId) => {
     try {
-        if (
-            !mongoose.Types.ObjectId.isValid(theatreId) ||
-            !mongoose.Types.ObjectId.isValid(movieId)
-        ) {
+        // Validate ObjectIds
+        if (!mongoose.Types.ObjectId.isValid(theatreId) ||
+            !mongoose.Types.ObjectId.isValid(movieId)) {
             return {
                 err: "Invalid theatreId or movieId",
-                status: STATUS.BAD_REQUEST
+                status: 400
             };
         }
 
@@ -198,12 +201,14 @@ const checkMovieInATheatre = async (theatreId, movieId) => {
         if (!theatre) {
             return {
                 err: "No such theatre found for the given id",
-                status: STATUS.NOT_FOUND
+                status: 404
             };
         }
 
+        const isMoviePresent = theatre.movies.includes(movieId);
+
         return {
-            isMoviePresent: theatre.movies.includes(movieId)
+            isMoviePresent
         };
 
     } catch (error) {
@@ -211,6 +216,7 @@ const checkMovieInATheatre = async (theatreId, movieId) => {
         throw error;
     }
 };
+
 
 module.exports = {
     createTheatre,
@@ -222,3 +228,4 @@ module.exports = {
     getMoviesInAtheatre,
     checkMovieInATheatre
 };
+
