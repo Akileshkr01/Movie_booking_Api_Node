@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const userService = require("../services/user.service");
-const { USER_ROLE, STATUS } = require("../utils/constants");
+const { USER_ROLE, } = require("../utils/constants");
 const { errorResponseBody } = require("../utils/responseBody");
 
 /**
@@ -10,14 +10,14 @@ const validateSignupRequest = (req, res, next) => {
   const { name, email, password } = req.body;
 
   if (!name || !name.trim()) {
-    return res.status(STATUS.BAD_REQUEST).json({
+    return res.status(400).json({
       ...errorResponseBody,
       message: "Name of the user is required"
     });
   }
 
   if (!email || !email.trim()) {
-    return res.status(STATUS.BAD_REQUEST).json({
+    return res.status(400).json({
       ...errorResponseBody,
       message: "Email of the user is required"
     });
@@ -25,14 +25,14 @@ const validateSignupRequest = (req, res, next) => {
 
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   if (!emailRegex.test(email)) {
-    return res.status(STATUS.BAD_REQUEST).json({
+    return res.status(400).json({
       ...errorResponseBody,
       message: "Invalid email format"
     });
   }
 
   if (!password || !password.trim()) {
-    return res.status(STATUS.BAD_REQUEST).json({
+    return res.status(400).json({
       ...errorResponseBody,
       message: "Password of the user is required"
     });
@@ -48,14 +48,14 @@ const validateSigninRequest = (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !email.trim()) {
-    return res.status(STATUS.BAD_REQUEST).json({
+    return res.status(400).json({
       ...errorResponseBody,
       message: "No email provided for sign in"
     });
   }
 
   if (!password || !password.trim()) {
-    return res.status(STATUS.BAD_REQUEST).json({
+    return res.status(400).json({
       ...errorResponseBody,
       message: "No password provided for sign in"
     });
@@ -73,7 +73,7 @@ const isAuthenticated = async (req, res, next) => {
     const token = authHeader?.split(" ")[1];
 
     if (!token) {
-      return res.status(STATUS.UNAUTHORIZED).json({
+      return res.status(401).json({
         ...errorResponseBody,
         message: "No token provided"
       });
@@ -86,9 +86,7 @@ const isAuthenticated = async (req, res, next) => {
     next();
 
   } catch (error) {
-    console.error('Authentication error:', error);
-    
-    return res.status(STATUS.UNAUTHORIZED).json({
+    return res.status(401).json({
       ...errorResponseBody,
       message: "Invalid or expired token"
     });
@@ -102,14 +100,14 @@ const validateResetPasswordRequest = (req, res, next) => {
   const { oldPassword, newPassword } = req.body;
 
   if (!oldPassword || !oldPassword.trim()) {
-    return res.status(STATUS.BAD_REQUEST).json({
+    return res.status(400).json({
       ...errorResponseBody,
       message: "Missing the old password"
     });
   }
 
   if (!newPassword || !newPassword.trim()) {
-    return res.status(STATUS.BAD_REQUEST).json({
+    return res.status(400).json({
       ...errorResponseBody,
       message: "Missing the new password"
     });
@@ -123,7 +121,7 @@ const validateResetPasswordRequest = (req, res, next) => {
  */
 const isAdmin = (req, res, next) => {
   if (!req.user || req.user.userRole !== USER_ROLE.ADMIN) {
-    return res.status(STATUS.FORBIDDEN).json({
+    return res.status(403).json({
       ...errorResponseBody,
       message: "User is not an admin"
     });
@@ -133,7 +131,7 @@ const isAdmin = (req, res, next) => {
 
 const isClient = (req, res, next) => {
   if (!req.user || req.user.userRole !== USER_ROLE.CLIENT) {
-    return res.status(STATUS.FORBIDDEN).json({
+    return res.status(403).json({
       ...errorResponseBody,
       message: "User is not a client"
     });
@@ -147,7 +145,7 @@ const isAdminOrClient = (req, res, next) => {
     (req.user.userRole !== USER_ROLE.ADMIN &&
      req.user.userRole !== USER_ROLE.CLIENT)
   ) {
-    return res.status(STATUS.FORBIDDEN).json({
+    return res.status(403).json({
       ...errorResponseBody,
       message: "Unauthorized role"
     });
