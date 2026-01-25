@@ -47,7 +47,7 @@ app.use((err, req, res, next) => {
 // Final Error Handler
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
-    console.error(' Server Error:', err.stack || err);
+    console.error('🔥 Server Error:', err.stack || err);
     res.status(statusCode).json({
         success: false,
         message: err.message || "Internal Server Error",
@@ -66,10 +66,10 @@ const startServer = async () => {
         if (!dbUrl) throw new Error('DB_URL is missing in .env');
 
         await mongoose.connect(dbUrl);
-        console.log(' Connected to MongoDB');
+        console.log('✅ Connected to MongoDB');
 
         app.listen(PORT, () => {
-            console.log(` Server running at http://localhost:${PORT}`);
+            console.log(`🚀 Server running at http://localhost:${PORT}`);
         });
     } catch (err) {
         console.error(' Startup failed:', err.message);

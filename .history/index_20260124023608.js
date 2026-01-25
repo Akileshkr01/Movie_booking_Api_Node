@@ -47,7 +47,7 @@ app.use((err, req, res, next) => {
 // Final Error Handler
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
-    console.error(' Server Error:', err.stack || err);
+    console.error('🔥 Server Error:', err.stack || err);
     res.status(statusCode).json({
         success: false,
         message: err.message || "Internal Server Error",

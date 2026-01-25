@@ -6,7 +6,7 @@ const route = (app) => {
     app.patch(
         '/mba/api/v1/users/:id', 
         authMiddleware.isAuthenticated,  
-        //authMiddleware.isAdmin,          
+        authMiddleware.isAdminOrClient,          
         userMiddleware.validateUpdateUserRequest, 
         userController.update            
     );
