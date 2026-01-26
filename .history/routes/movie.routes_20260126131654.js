@@ -35,15 +35,13 @@ module.exports = (app) => {
     app.put(
         '/mba/api/v1/movies/:id',
         authMiddlewares.isAuthenticated,
-        authMiddlewares.isAdminOrClient, 
+         
         movieController.updateMovie
     );
     //Partial Update Movie
     
     app.patch(
-        '/mba/api/v1/movies/:id',
-        authMiddlewares.isAuthenticated,
-        authMiddlewares.isAdminOrClient,
+        '/mba/api/v1/movies/:id', 
         movieController.updateMovie
     );
     //Fetch the movies 

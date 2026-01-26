@@ -41,9 +41,7 @@ module.exports = (app) => {
     //Partial Update Movie
     
     app.patch(
-        '/mba/api/v1/movies/:id',
-        authMiddlewares.isAuthenticated,
-        authMiddlewares.isAdminOrClient,
+        '/mba/api/v1/movies/:id', 
         movieController.updateMovie
     );
     //Fetch the movies 
