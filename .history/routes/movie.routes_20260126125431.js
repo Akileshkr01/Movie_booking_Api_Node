@@ -26,7 +26,7 @@ module.exports = (app) => {
     app.delete(
         '/mba/api/v1/movies/:id',
         authMiddlewares.isAuthenticated,
-        authMiddlewares.isAdminOrClient,
+        authMiddlewares.
         movieController.deleteMovie
     );
 
