@@ -27,4 +27,5 @@ module.exports = {
     validateTheatreCreateRequest,
     validateUpdateMoviesRequest
 };
-
+/*84510
++9-]'/ 1
