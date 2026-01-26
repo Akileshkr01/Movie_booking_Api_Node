@@ -8,8 +8,8 @@ module.exports = (app) => {
     
     app.post(
         '/mba/api/v1/movies',
-        authMiddlewares.isAuthenticated,
-        authMiddlewares.isAdminOrClient,
+        authM
+
         movieMiddlewares.validateMovieCreateRequest,
         movieController.createMovie
     );

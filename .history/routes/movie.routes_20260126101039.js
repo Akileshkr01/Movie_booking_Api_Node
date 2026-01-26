@@ -1,6 +1,6 @@
 const movieController = require('../controllers/movie.controller');
 const movieMiddlewares = require('../middlewares/movie.middleware');
-const authMiddlewares = require('../middlewares/auth.middlewares');
+const authMiddlewares = require('../')
 module.exports = (app) => {
     console.log('Movie routes registered');
 
@@ -8,8 +8,6 @@ module.exports = (app) => {
     
     app.post(
         '/mba/api/v1/movies',
-        authMiddlewares.isAuthenticated,
-        authMiddlewares.isAdminOrClient,
         movieMiddlewares.validateMovieCreateRequest,
         movieController.createMovie
     );
