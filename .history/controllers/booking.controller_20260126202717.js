@@ -1,0 +1,1 @@
+const {successResponseBody} = require('../utils/responseBody');

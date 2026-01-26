@@ -1,0 +1,13 @@
+const bookingController = require('../controllers/booking.controller');
+const authMiddlewares = require('../middlewares/auth.middlewares');
+const bookingMiddlewares = require('../middlewares/booking.middlewares');
+const routes = (app) => {
+    app.post(
+        '/mba/api/v1/booking',
+        authMiddlewares.isAuthenticated,
+        bookingMiddlewares
+        bookingController.create
+    );
+}
+
+module.exports = routes;
