@@ -2,6 +2,13 @@ const theatreService = require('../services/theatre.service');
 const { successResponseBody, errorResponseBody } = require('../utils/responseBody');
 const { STATUS } = require('../utils/constants');
 
+const handleError = (res, err) => {
+    return res.status(err.code || STATUS.INTERNAL_SERVER_ERROR).json({
+        ...errorResponseBody,
+        err: err.err || err.message || err
+    });
+};
+
 const create = async (req, res) => {
     try {
         const theatre = await theatreService.createTheatre(req.body);
@@ -10,10 +17,7 @@ const create = async (req, res) => {
             data: theatre
         });
     } catch (err) {
-        return res.status(err.code || STATUS.INTERNAL_SERVER_ERROR).json({
-            ...errorResponseBody,
-            err: err.err || err.message || err
-        });
+        return handleError(res, err);
     }
 };
 
@@ -25,10 +29,7 @@ const destroy = async (req, res) => {
             data: theatre
         });
     } catch (err) {
-        return res.status(err.code || STATUS.INTERNAL_SERVER_ERROR).json({
-            ...errorResponseBody,
-            err: err.err || err.message || err
-        });
+        return handleError(res, err);
     }
 };
 
@@ -40,10 +41,7 @@ const getTheatre = async (req, res) => {
             data: theatre
         });
     } catch (err) {
-        return res.status(err.code || STATUS.INTERNAL_SERVER_ERROR).json({
-            ...errorResponseBody,
-            err: err.err || err.message || err
-        });
+        return handleError(res, err);
     }
 };
 
@@ -55,10 +53,7 @@ const getTheatres = async (req, res) => {
             data: theatres
         });
     } catch (err) {
-        return res.status(err.code || STATUS.INTERNAL_SERVER_ERROR).json({
-            ...errorResponseBody,
-            err: err.err || err.message || err
-        });
+        return handleError(res, err);
     }
 };
 
@@ -70,10 +65,7 @@ const update = async (req, res) => {
             data: theatre
         });
     } catch (err) {
-        return res.status(err.code || STATUS.INTERNAL_SERVER_ERROR).json({
-            ...errorResponseBody,
-            err: err.err || err.message || err
-        });
+        return handleError(res, err);
     }
 };
 
@@ -89,10 +81,7 @@ const updateMovies = async (req, res) => {
             data: theatre
         });
     } catch (err) {
-        return res.status(err.code || STATUS.INTERNAL_SERVER_ERROR).json({
-            ...errorResponseBody,
-            err: err.err || err.message || err
-        });
+        return handleError(res, err);
     }
 };
 
@@ -104,10 +93,7 @@ const getMovies = async (req, res) => {
             data: theatre
         });
     } catch (err) {
-        return res.status(err.code || STATUS.INTERNAL_SERVER_ERROR).json({
-            ...errorResponseBody,
-            err: err.err || err.message || err
-        });
+        return handleError(res, err);
     }
 };
 
@@ -122,10 +108,7 @@ const checkMovie = async (req, res) => {
             data: result
         });
     } catch (err) {
-        return res.status(err.code || STATUS.INTERNAL_SERVER_ERROR).json({
-            success: false,
-            err: err.err || err.message || err
-        });
+        return handleError(res, err);
     }
 };
 

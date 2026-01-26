@@ -45,7 +45,7 @@ const signin = async (req, res) => {
     const token = jwt.sign(
       { id: user.id, email: user.email },
       process.env.AUTH_KEY,
-      { expiresIn: "8h" }
+      { expiresIn: "h" }
     );
 
     return res.status(200).json({
