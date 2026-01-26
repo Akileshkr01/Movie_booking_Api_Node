@@ -18,6 +18,7 @@ module.exports = (app) => {
     
     app.get(
         '/mba/api/v1/movies/:id',
+        
         movieController.getMovie
     );
 
@@ -25,8 +26,6 @@ module.exports = (app) => {
     
     app.delete(
         '/mba/api/v1/movies/:id',
-        authMiddlewares.isAuthenticated,
-        authMiddlewares.isAdminOrClient,
         movieController.deleteMovie
     );
 
