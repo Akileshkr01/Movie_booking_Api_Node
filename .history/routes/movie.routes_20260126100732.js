@@ -1,6 +1,6 @@
 const movieController = require('../controllers/movie.controller');
 const movieMiddlewares = require('../middlewares/movie.middleware');
-const authMiddlewares = require('../middlewares/auth.middlewares');
+
 module.exports = (app) => {
     console.log('Movie routes registered');
 
@@ -8,8 +8,6 @@ module.exports = (app) => {
     
     app.post(
         '/mba/api/v1/movies',
-        authMiddlewares.isAuthenticated,
-        authMiddlewares.isAdminOrClient,
         movieMiddlewares.validateMovieCreateRequest,
         movieController.createMovie
     );
@@ -41,7 +39,7 @@ module.exports = (app) => {
         movieController.updateMovie
     );
     //Fetch the movies 
-    
+    //Method:GET 
     app.get(
         '/mba/api/v1/movies',
         movieController.getMovies

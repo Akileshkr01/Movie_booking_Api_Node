@@ -40,7 +40,7 @@ module.exports = (app) => {
     app.put(
         '/mba/api/v1/theatres/:id',
         authMiddleware.isAuthenticated,
-        authMiddleware.isAdminOrClient,
+        authMiddleware.isA
         theatreController.update
     )
     app.patch(

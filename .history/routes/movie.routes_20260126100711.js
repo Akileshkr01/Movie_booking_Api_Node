@@ -1,6 +1,6 @@
 const movieController = require('../controllers/movie.controller');
 const movieMiddlewares = require('../middlewares/movie.middleware');
-const authMiddlewares = require('../middlewares/auth.middlewares');
+
 module.exports = (app) => {
     console.log('Movie routes registered');
 
@@ -8,8 +8,6 @@ module.exports = (app) => {
     
     app.post(
         '/mba/api/v1/movies',
-        authMiddlewares.isAuthenticated,
-        authMiddlewares.isAdminOrClient,
         movieMiddlewares.validateMovieCreateRequest,
         movieController.createMovie
     );
@@ -22,26 +20,26 @@ module.exports = (app) => {
     );
 
     // Delete Movie
-    
+    // Method: DELETE | URL: http://localhost:3000/mba/api/v1/movies/:id
     app.delete(
         '/mba/api/v1/movies/:id',
         movieController.deleteMovie
     );
 
     // Update Movie
-    
+    // Method: PUT | URL: http://localhost:3000/mba/api/v1/movies/:id
     app.put(
         '/mba/api/v1/movies/:id', 
         movieController.updateMovie
     );
     //Partial Update Movie
-    
+    //Method: PATCH | URL:http://localhost:3000/mba/api/v1/movies/:id
     app.patch(
         '/mba/api/v1/movies/:id', 
         movieController.updateMovie
     );
     //Fetch the movies 
-    
+    //Method:GET 
     app.get(
         '/mba/api/v1/movies',
         movieController.getMovies
