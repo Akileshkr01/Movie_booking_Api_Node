@@ -1,0 +1,12 @@
+const {successResponseBody,errorResponseBody} = require('../utils/responseBody');
+const bookingService = require('../services/booking.service');
+const {STATUS} = require('../utils/constants');
+
+const create = async(req,res) => {
+    try {
+        let userId = req.user;
+        const response = bookingService.createBooking()
+    } catch (error) {
+        
+    }
+}
