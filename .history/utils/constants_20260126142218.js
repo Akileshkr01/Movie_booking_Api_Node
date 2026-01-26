@@ -23,14 +23,9 @@ const STATUS_CODES = {
     INTERNAL_SERVER_ERROR: 500
 };
 
-const BOOKING_STATUS = {
-    cancelled:"CANCELLED",
-    successfull:"SUCCESSFULL",
-    processing: "IN_PROCESS"
-}
+const BOOKIN
 module.exports = {
     USER_ROLE,
     USER_STATUS,
-    BOOKING_STATUS,
     STATUS: STATUS_CODES
 };
