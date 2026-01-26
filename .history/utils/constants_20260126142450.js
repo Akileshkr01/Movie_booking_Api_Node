@@ -31,6 +31,6 @@ const BOOKING_STATUS = {
 module.exports = {
     USER_ROLE,
     USER_STATUS,
-    BOOKING_STATUS,
+    
     STATUS: STATUS_CODES
 };
