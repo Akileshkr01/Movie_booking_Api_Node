@@ -44,25 +44,28 @@ const createShow = async (data) => {
 
 const getShows = async (data = {}) => {
     try {
-        const filter = {
-            ...(data.theatreId && { theatreId: data.theatreId }),
-            ...(data.movieId && { movieId: data.movieId }),
-        };
+        const filter = {};
 
-        const shows = await Show.find(filter).lean();
-
-        if (!shows || shows.length === 0) {
-            const error = new Error("No shows found");
-            error.code = STATUS.NOT_FOUND;
-            throw error;
+        if (data.theatreId) {
+            filter.theatreId = data.theatreId;
         }
 
+        if (data.movieId) {
+            filter.movieId = data.movieId;
+        }
+
+        const shows = await Show.find(filter).lean();
+        if(!response){
+            throw{
+                err:'No shows found',
+                
+            }
+        }
         return shows;
     } catch (error) {
-        throw error; 
+        throw new Error(error.message || "Failed to fetch shows");
     }
 };
-
 
 
 module.exports = {

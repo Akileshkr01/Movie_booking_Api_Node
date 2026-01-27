@@ -59,7 +59,7 @@ const getShows = async (data = {}) => {
 
         return shows;
     } catch (error) {
-        throw error; 
+        throw error; // preserve message + code
     }
 };
 

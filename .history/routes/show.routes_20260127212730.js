@@ -11,9 +11,8 @@ const routes = (app) => {
     );
 
     app.get(
-        '/mba/api/v1/show',
-        showController.getShow
-    );
+        
+    )
 }
 
 module.exports = routes;
