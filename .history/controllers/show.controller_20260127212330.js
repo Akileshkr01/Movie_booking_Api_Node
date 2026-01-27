@@ -27,25 +27,16 @@ const create = async (req, res) => {
 };
 
 
-const getShow = async (req, res) => {
+const getShow = async (req,res) => {
     try {
         const response = await showService.getShows(req.query);
-
-        return res.status(STATUS.OK).json({
-            ...successResponseBody,
-            message: "Successfully fetched the movie shows",
-            data: response
-        });
-
+        successResponseBody.message = "Successfully fetched the movie shows";
+        successResponseBody.data = response;
+        return res.status()
     } catch (error) {
-        return res.status(error.code || STATUS.INTERNAL_SERVER_ERROR).json({
-            ...errorResponseBody,
-            err: error.message || "Something went wrong"
-        });
+        
     }
-};
-
+}
 module.exports = {
-    create,
-    getShow
+    create
 };

@@ -10,10 +10,7 @@ const routes = (app) => {
         showController.create
     );
 
-    app.get(
-        '/mba/api/v1/show',
-        showController.getShow
-    );
+    app.get
 }
 
 module.exports = routes;
