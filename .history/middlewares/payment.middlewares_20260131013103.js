@@ -1,6 +1,6 @@
 const { STATUS } = require('../utils/constants');
 const { errorResponseBody } = require('../utils/responseBody');
-const  ObjectId  = require('mongoose').Types.ObjectId;
+const { Types: { ObjectId } } = require('mongoose').Types.;
 
 const verifyPaymentCreateRequest = (req, res, next) => {
     const { bookingId, amount } = req.body;
