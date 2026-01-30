@@ -13,7 +13,6 @@ const createPayment = async (data) => {
             code: STATUS.NOT_FOUND
         };
     }
-    
     if (booking.status === BOOKING_STATUS.successfull) {
         throw {
             err: 'Booking already completed, cannot make a new payment against it',

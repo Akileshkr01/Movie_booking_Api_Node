@@ -6,18 +6,15 @@ const PAYMENT_TIME_LIMIT_MINUTES = 5;
 
 const createPayment = async (data) => {
     const booking = await Booking.findById(data.bookingId);
-    
+    if(booking.status == BOOKING_STATUS.successfull){
+        throw{
+            err: 'Bo'
+        }
+    }
     if (!booking) {
         throw {
             err: 'No booking found',
             code: STATUS.NOT_FOUND
-        };
-    }
-    
-    if (booking.status === BOOKING_STATUS.successfull) {
-        throw {
-            err: 'Booking already completed, cannot make a new payment against it',
-            code: STATUS.FORBIDDEN
         };
     }
 
