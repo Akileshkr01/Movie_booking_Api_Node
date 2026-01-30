@@ -1,0 +1,2 @@
+const paymentController  = require('../controllers/payment.controller');
+const authMiddlewares  = require('../')
