@@ -14,13 +14,6 @@ const createPayment = async (data) => {
         };
     }
     
-    if (booking.status === BOOKING_STATUS.successfull) {
-        throw {
-            err: 'Booking already completed, cannot make a new payment against it',
-            code: STATUS.FORBIDDEN
-        };
-    }
-
     const bookingTime = booking.createdAt.getTime();
     const currentTime = Date.now();
 
