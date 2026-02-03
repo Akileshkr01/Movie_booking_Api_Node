@@ -4,36 +4,9 @@ const { STATUS } = require('../utils/constants');
 
 const createBooking = async (data) => {
   try {
-    // Find the show (single document)
-    const show = await Show.findOne({
-      movieId: data.movieId,
-      theatreId: data.theatreId,
-      timing: data.timing
-    });
 
-    if (!show) {
-      throw {
-        err: 'Show not found',
-        code: STATUS.NOT_FOUND
-      };
-    }
-
-    // Check seat availability
-    if (show.noOfSeats < data.noOfSeats) {
-      throw {
-        err: 'Not enough seats available',
-        code: STATUS.UNPROCESSABLE_ENTITY
-      };
-    }
-
-    // Calculate total cost
-    data.totalCost = data.noOfSeats * show.price;
-
-    // Create booking
+    const show = await Show.find(movieI)
     const response = await Booking.create(data);
-
-   
-
     return response;
 
   } catch (error) {
@@ -50,14 +23,9 @@ const createBooking = async (data) => {
       };
     }
 
-    // If already a structured error, rethrow
-    if (error.code) {
-      throw error;
-    }
-
     // fallback for unknown errors
     throw {
-      err: 'Failed to create booking',
+      err: "Failed to create booking",
       code: STATUS.INTERNAL_SERVER_ERROR
     };
   }
