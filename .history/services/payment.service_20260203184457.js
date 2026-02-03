@@ -7,17 +7,19 @@ const { STATUS, BOOKING_STATUS, PAYMENT_STATUS, USER_ROLE } = require('../utils/
 const PAYMENT_TIME_LIMIT_MINUTES = 5;
 
 const createPayment = async (data) => {
-    // 1. Fetch booking
     const booking = await Booking.findById(data.bookingId);
-
+    const show = await Show.findOne({
+        movieId: booking.movieId,
+        theatreId: booking.theatreId,
+        timing
+    });
     if (!booking) {
         throw {
             err: 'No booking found',
             code: STATUS.NOT_FOUND
         };
     }
-
-    // 2. Prevent duplicate payment
+    
     if (booking.status === BOOKING_STATUS.successfull) {
         throw {
             err: 'Booking already completed, cannot make a new payment against it',
@@ -25,9 +27,10 @@ const createPayment = async (data) => {
         };
     }
 
-    // 3. Check payment time window
     const bookingTime = booking.createdAt.getTime();
     const currentTime = Date.now();
+
+    // minutes elapsed since booking
     const minutesElapsed = Math.floor((currentTime - bookingTime) / (1000 * 60));
 
     if (minutesElapsed > PAYMENT_TIME_LIMIT_MINUTES) {
@@ -36,39 +39,12 @@ const createPayment = async (data) => {
         return booking;
     }
 
-    // 4. Fetch show
-    const show = await Show.findOne({
-        movieId: booking.movieId,
-        theatreId: booking.theatreId,
-        timing: booking.timing
-    });
-
-    if (!show) {
-        throw {
-            err: 'Show not found',
-            code: STATUS.NOT_FOUND
-        };
-    }
-
-    // 5. Check seat availability BEFORE payment success
-    if (show.noOfSeats < booking.noOfSeats) {
-        booking.status = BOOKING_STATUS.cancelled;
-        await booking.save();
-
-        throw {
-            err: 'Not enough seats available',
-            code: STATUS.UNPROCESSABLE_ENTITY
-        };
-    }
-
-    // 6. Create payment (pending)
     const payment = await Payment.create({
-        bookingId: booking._id,
+        bookingId: data.bookingId,
         amount: data.amount,
         status: PAYMENT_STATUS.pending
     });
 
-    // 7. Validate amount
     if (payment.amount !== booking.totalCost) {
         payment.status = PAYMENT_STATUS.failed;
         booking.status = BOOKING_STATUS.cancelled;
@@ -78,12 +54,12 @@ const createPayment = async (data) => {
         return booking;
     }
 
-    // 8. SUCCESS: deduct seats now
-    show.noOfSeats -= booking.noOfSeats;
-    await show.save();
-
     payment.status = PAYMENT_STATUS.success;
     booking.status = BOOKING_STATUS.successfull;
+
+    show.noOfSeats
+
+
 
     await payment.save();
     await booking.save();

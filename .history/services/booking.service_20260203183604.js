@@ -32,7 +32,9 @@ const createBooking = async (data) => {
     // Create booking
     const response = await Booking.create(data);
 
-   
+    // Update available seats
+    show.noOfSeats -= data.noOfSeats;
+    await show.save();
 
     return response;
 
