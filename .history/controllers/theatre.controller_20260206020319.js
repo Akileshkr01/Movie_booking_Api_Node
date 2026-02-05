@@ -6,7 +6,7 @@ const { STATUS } = require('../utils/constants');
 
 const create = async (req, res) => {
     try {
-        const theatre = await theatreService.createTheatre({...req.body , owner: req.user});
+        const theatre = await theatreService.createTheatre({...req.body , owner} );
        
         return res.status(STATUS.CREATED).json({
             ...successResponseBody,
