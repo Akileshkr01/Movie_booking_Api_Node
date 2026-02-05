@@ -1,0 +1,11 @@
+const axios = require('axios');
+const User = require('../models')
+const sendMail = (subject , email, content)  => {
+    axios.post(process.env.NOTI_SERVICE + '/notiservice/api/v1/notifications',{
+            subject: subject,
+            recepientEmails: [email] ,
+            content: content
+    });
+}
+
+module.exports = sendMail;
