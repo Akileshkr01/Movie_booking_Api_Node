@@ -1,26 +1,15 @@
 const theatreService = require('../services/theatre.service');
 const { successResponseBody, errorResponseBody } = require('../utils/responseBody');
 const { STATUS } = require('../utils/constants');
-const sendMail = require('../services/email.service');
+const sendMail = require('../ser')
 
 
 const create = async (req, res) => {
     try {
-        if (!req.user || !req.user._id) {
-            return res.status(STATUS.UNAUTHORIZED).json({
-                ...errorResponseBody,
-                err: 'Unauthorized request'
-            });
-        }
-
-        const theatre = await theatreService.createTheatre({
-            ...req.body,
-            owner: req.user._id
-        });
-
-        await sendMail(
+        const theatre = await theatreService.createTheatre({...req.body , owner: req.user});
+        sendMail(
             'Successfully created a theatre',
-            req.user._id,
+            req.user,
             'You have successfully created a new theatre'
         );
 
@@ -31,7 +20,7 @@ const create = async (req, res) => {
     } catch (err) {
         return res.status(err.code || STATUS.INTERNAL_SERVER_ERROR).json({
             ...errorResponseBody,
-            err: err.err || err.message || 'Internal server error'
+            err: err.err || err.message || err
         });
     }
 };
