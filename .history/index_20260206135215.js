@@ -101,11 +101,11 @@ const startServer = async () => {
         );
 
         app.listen(PORT, () => {
-            console.log(` Server running at http://localhost:${PORT}`);
+            console.log(`🚀 Server running at http://localhost:${PORT}`);
         });
 
     } catch (err) {
-        console.error(' Not able to connect MongoDB:', err.message);
+        console.error('❌ Not able to connect MongoDB:', err.message);
         process.exit(1);
     }
 };
