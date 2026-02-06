@@ -105,7 +105,7 @@ const startServer = async () => {
         });
 
     } catch (err) {
-        console.error(' Not able to connect MongoDB:', err.message);
+        console.error('❌ Not able to connect MongoDB:', err.message);
         process.exit(1);
     }
 };

@@ -97,15 +97,15 @@ const startServer = async () => {
         await mongoose.connect(dbUrl);
 
         console.log(
-            ` MongoDB connected (${isProduction ? 'Production / Atlas' : 'Development'})`
+            `✅ MongoDB connected (${isProduction ? 'Production / Atlas' : 'Development'})`
         );
 
         app.listen(PORT, () => {
-            console.log(` Server running at http://localhost:${PORT}`);
+            console.log(`🚀 Server running at http://localhost:${PORT}`);
         });
 
     } catch (err) {
-        console.error(' Not able to connect MongoDB:', err.message);
+        console.error('❌ Not able to connect MongoDB:', err.message);
         process.exit(1);
     }
 };
